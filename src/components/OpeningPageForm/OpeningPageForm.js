@@ -1,13 +1,13 @@
 import React from 'react';
 import { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import TextField from '@material-ui/core/TextField';
-import Typography from '@material-ui/core/Typography';
-import Container from '@material-ui/core/Container';
-import Grid from '@material-ui/core/Grid';
+import { Container, Typography, TextField, Grid, Button } from '@material-ui/core';
 import logo from '../../images/logo.png';
 import testFile from '../../Doc/test.docx';
-
+import Docxtemplater from 'docxtemplater';
+import { saveAs } from 'file-saver';
+import PizZip from 'pizzip';
+import ImageModule from 'docxtemplater-image-module-free';
 
 const useStyles = makeStyles((theme) => ({
   formContainer: {
@@ -24,7 +24,17 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     marginTop: theme.spacing(3),
   },
+  input: {
+    display: 'none',
+  },
+  button: {
+    margin: theme.spacing(1),
+  },
+  submit: {
+    margin: theme.spacing(3, 0, 2),
+  },
 }));
+
 
 function OpeningPageForm() {
   const classes = useStyles();
@@ -32,15 +42,66 @@ function OpeningPageForm() {
   const [documentName, setDocumentName] = useState('');
   const [date, setDate] = useState('');
   const [companyName, setCompanyName] = useState('');
+  const [imageData, setImageData] = useState('');
+  const [formData, setFormData] = useState({companyName: '',documentName: '', imageData1: '',date: ''});
 
+  const handleImageChange = (event, name) => {
+    console.log(name);
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData({...formData, [name]: reader.result})
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [name]: value,
+    }));
+  };
+
+  async function generateDocx(formData) {
+    const templateResponse = await fetch(testFile);
+    const templateArrayBuffer = await templateResponse.arrayBuffer();
+    const zip = new PizZip(templateArrayBuffer);
   
+    const imageModuleOptions = {
+      centered: false, // Set to true if you want the image to be centered in the cell
+      getImage: (tagValue, tagName) => {
+        return atob(tagValue.split(',')[1]);
+      },
+      getSize: (img, tagValue, tagName) => {
+        return [200, 100]; // You can customize the image size here, e.g., [width, height]
+      },
+    };
+  
+    const doc = new Docxtemplater()
+      .attachModule(new ImageModule(imageModuleOptions))
+      .loadZip(zip);
+    doc.setData(formData);
+    doc.render();
+  
+    const output = doc.getZip().generate({ type: 'blob' });
+    saveAs(output, 'output.docx');
+  }
 
   const handleSubmit = (event) => {
     event.preventDefault();
-
-   
+    const formData = {
+      documentName: documentName,
+      date: date,
+      companyName: companyName,
+      imageTag: imageData
+    }
+    generateDocx(formData);
   }
 
+  
   return (
     <Container component="main" maxWidth="md">
       <div className={classes.formContainer}>
@@ -50,7 +111,7 @@ function OpeningPageForm() {
         </Typography>
         <form className={classes.form} noValidate>
           <Grid container spacing={2}>
-            <Grid item xs={12}>
+          <Grid item xs={12}>
               <TextField
                 variant="outlined"
                 required
@@ -58,7 +119,7 @@ function OpeningPageForm() {
                 id="documentName"
                 label="Document Name"
                 name="documentName"
-                onChange={(event) => setDocumentName(event.target.value)}
+                onChange={handleInputChange}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -73,7 +134,7 @@ function OpeningPageForm() {
                 InputLabelProps={{
                   shrink: true,
                 }}
-                onChange={(event) => setDate(event.target.value)}
+                onChange={handleInputChange}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -84,10 +145,37 @@ function OpeningPageForm() {
                 id="companyName"
                 label="Company Name"
                 name="companyName"
-                onChange={(event) => setCompanyName(event.target.value)}
+                onChange={handleInputChange}
               />
             </Grid>
-            <button onClick={handleSubmit}>Submit</button>
+            <Grid item xs={12}>
+              <input
+                accept="image/*"
+                className={classes.input}
+                style={{ display: 'none' }}
+                id="raised-button-file"
+                type="file"
+                onChange={(event)=> handleImageChange(event,'imageData1')}
+                name='imageData1'
+              />
+              <label htmlFor="raised-button-file">
+                <Button variant="contained" color="primary" component="span" className={classes.button}>
+                  Upload Image
+                </Button>
+              </label>
+            </Grid>
+            <Grid item xs={12}>
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                color="primary"
+                className={classes.submit}
+                onClick={handleSubmit}
+              >
+                Submit
+              </Button>
+            </Grid>
           </Grid>
         </form>
       </div>
