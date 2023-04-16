@@ -8,6 +8,7 @@ import Docxtemplater from 'docxtemplater';
 import { saveAs } from 'file-saver';
 import PizZip from 'pizzip';
 import ImageModule from 'docxtemplater-image-module-free';
+import ScenarioForm from "../../components/ScenarioForm/ScenarioForm";
 
 const useStyles = makeStyles((theme) => ({
   formContainer: {
@@ -44,6 +45,7 @@ function OpeningPageForm() {
   const [companyName, setCompanyName] = useState('');
   const [imageData, setImageData] = useState('');
   const [formData, setFormData] = useState({companyName: '',documentName: '', imageData1: '',date: ''});
+  const [scenariosData, setSceneriosData] = useState('');
 
   const handleImageChange = (event, name) => {
     console.log(name);
@@ -65,7 +67,12 @@ function OpeningPageForm() {
     }));
   };
 
-  async function generateDocx(formData) {
+  const AddScenarios = (scenarios) => {
+    console.log(scenarios);
+    setSceneriosData(scenarios);
+  };
+
+  async function generateDocx(formData, scenariosData) {
     const templateResponse = await fetch(testFile);
     const templateArrayBuffer = await templateResponse.arrayBuffer();
     const zip = new PizZip(templateArrayBuffer);
@@ -83,7 +90,15 @@ function OpeningPageForm() {
     const doc = new Docxtemplater()
       .attachModule(new ImageModule(imageModuleOptions))
       .loadZip(zip);
-    doc.setData(formData);
+    // doc.setData(formData);
+    console.log(scenariosData);
+    doc.setData({
+      ...formData,
+      scenarios: (scenariosData).map((scenario, index) => ({
+        ...scenario,
+        // Add any other necessary transformations to the scenario object here
+      })),
+    });
     doc.render();
   
     const output = doc.getZip().generate({ type: 'blob' });
@@ -98,9 +113,10 @@ function OpeningPageForm() {
       companyName: companyName,
       imageTag: imageData
     }
-    generateDocx(formData);
+    generateDocx(formData, scenariosData);
   }
 
+  // console.log(formData.scenariosData);
   
   return (
     <Container component="main" maxWidth="md">
@@ -159,8 +175,8 @@ function OpeningPageForm() {
                 name='imageData1'
               />
               <label htmlFor="raised-button-file">
-                <Button variant="contained" color="primary" component="span" className={classes.button}>
-                  Upload Image
+                <Button variant="contained" color="secondary" component="span" className={classes.button}>
+                  Add Company Image
                 </Button>
               </label>
             </Grid>
@@ -178,6 +194,7 @@ function OpeningPageForm() {
             </Grid>
           </Grid>
         </form>
+        <ScenarioForm onAddScenarios={AddScenarios} />
       </div>
     </Container>
   );
