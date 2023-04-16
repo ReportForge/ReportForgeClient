@@ -39,16 +39,14 @@ const useStyles = makeStyles((theme) => ({
 
 function OpeningPageForm() {
   const classes = useStyles();
-  const [templateFile, setTemplateFile] = useState(null);
   const [documentName, setDocumentName] = useState('');
   const [date, setDate] = useState('');
   const [companyName, setCompanyName] = useState('');
   const [imageData, setImageData] = useState('');
-  const [formData, setFormData] = useState({companyName: '',documentName: '', imageData1: '',date: ''});
+  const [formData, setFormData] = useState({companyName: '',documentName: '', imageTag: '',date: ''});
   const [scenariosData, setSceneriosData] = useState('');
 
   const handleImageChange = (event, name) => {
-    console.log(name);
     const file = event.target.files[0];
     if (file) {
       const reader = new FileReader();
@@ -61,18 +59,16 @@ function OpeningPageForm() {
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      [name]: value,
-    }));
+    setFormData({...formData,[name]: value,});
   };
 
   const AddScenarios = (scenarios) => {
-    console.log(scenarios);
     setSceneriosData(scenarios);
   };
 
   async function generateDocx(formData, scenariosData) {
+    console.log(formData);
+    console.log(scenariosData);
     const templateResponse = await fetch(testFile);
     const templateArrayBuffer = await templateResponse.arrayBuffer();
     const zip = new PizZip(templateArrayBuffer);
@@ -90,12 +86,12 @@ function OpeningPageForm() {
     const doc = new Docxtemplater()
       .attachModule(new ImageModule(imageModuleOptions))
       .loadZip(zip);
-    // doc.setData(formData);
-    console.log(scenariosData);
+
     doc.setData({
       ...formData,
       scenarios: (scenariosData).map((scenario, index) => ({
         ...scenario,
+        recommendations: scenario.recommendations,
         // Add any other necessary transformations to the scenario object here
       })),
     });
@@ -106,17 +102,11 @@ function OpeningPageForm() {
   }
 
   const handleSubmit = (event) => {
-    event.preventDefault();
-    const formData = {
-      documentName: documentName,
-      date: date,
-      companyName: companyName,
-      imageTag: imageData
-    }
+    event.preventDefault();    
     generateDocx(formData, scenariosData);
   }
 
-  // console.log(formData.scenariosData);
+  
   
   return (
     <Container component="main" maxWidth="md">
@@ -171,8 +161,8 @@ function OpeningPageForm() {
                 style={{ display: 'none' }}
                 id="raised-button-file"
                 type="file"
-                onChange={(event)=> handleImageChange(event,'imageData1')}
-                name='imageData1'
+                onChange={(event)=> handleImageChange(event,'imageTag')}
+                name='imageTag'
               />
               <label htmlFor="raised-button-file">
                 <Button variant="contained" color="secondary" component="span" className={classes.button}>

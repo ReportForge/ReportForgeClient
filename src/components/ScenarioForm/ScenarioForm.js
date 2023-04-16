@@ -11,25 +11,34 @@ export default function ScenarioForm({ onAddScenarios }) {
   const [scenarioDifficulty, setScenarioDifficulty] = useState("");
   const [scenarioImpact, setScenarioImpact] = useState("");
   const [scenarios, setScenarios] = useState([]);
+  const [recommendation, setRecommendation] = useState("");
+  const [recommendations, setRecommendations] = useState([]);
+
   var count = 1;
 
     useEffect(() => {
         onAddScenarios(scenarios);
     }, [scenarios])
     
+    const handleAddRecommendation = () => {
+        setRecommendations([...recommendations, recommendation]);
+        };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const newScenario = {
-        scenarioNumber: scenarioNumber,
-        scenarioTitle: scenarioTitle,
-        scenarioDifficulty: scenarioDifficulty,
-        scenarioImpact: scenarioImpact
-    }
-    setScenarios([...scenarios, newScenario]);
-    setScenarioNumber(scenarioNumber + 1);
-  };
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        const newScenario = {
+            scenarioNumber: scenarioNumber,
+            scenarioTitle: scenarioTitle,
+            scenarioDifficulty: scenarioDifficulty,
+            scenarioImpact: scenarioImpact,
+            recommendations: recommendations
+        }
+        setScenarios([...scenarios, newScenario]);
+        setScenarioNumber(scenarioNumber + 1);
+        setRecommendations([]);
+    };
 
+  
   return (
         <form onSubmit={handleSubmit}>
         <Typography component="h1" variant="h5">
@@ -84,6 +93,24 @@ export default function ScenarioForm({ onAddScenarios }) {
                 </MenuItem>
                 ))}
             </TextField>
+            </Grid>
+            <Grid item xs={6}>
+                <TextField
+                label="Security Recommendation"
+                value={recommendation}
+                onChange={(e) => setRecommendation(e.target.value)}
+                fullWidth
+                />
+            </Grid>
+            <Grid item xs={6}>
+                <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={handleAddRecommendation}
+                    fullWidth
+                    >
+                    Add Recommendation
+                </Button>
             </Grid>
             <Grid item xs={12}>
             <Button variant="contained" color="primary" type="submit" fullWidth>
