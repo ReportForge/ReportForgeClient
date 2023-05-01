@@ -33,9 +33,11 @@ function HomePage() {
                 Create English Report
             </Button>
           </Link>
-          <Button className={classes.button} variant="contained" color="secondary">
-          Create Hebrew Report
-          </Button>
+          <Link to="/Hebrew">
+            <Button className={classes.button} variant="contained" color="secondary">
+              Create Hebrew Report
+            </Button>
+          </Link>
         </Container>
     </div>
   );

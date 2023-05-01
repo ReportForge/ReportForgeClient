@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { TextField, MenuItem, Button, Grid, Typography } from "@mui/material";
 import Scenario from "../../components/Scenario/Scenario";
 
-const difficulties = ["low", "medium", "high"];
-const impacts = ["low", "medium", "high"];
+const difficulties = ["Low", "Medium", "High"];
+const impacts = ["Low", "Medium", "High"];
 
 export default function ScenarioForm({ onAddScenarios }) {
   const [scenarioNumber, setScenarioNumber] = useState(1);
@@ -14,14 +14,14 @@ export default function ScenarioForm({ onAddScenarios }) {
   const [recommendation, setRecommendation] = useState("");
   const [recommendations, setRecommendations] = useState([]);
 
-  var count = 1;
 
     useEffect(() => {
         onAddScenarios(scenarios);
-    }, [scenarios])
+    },[scenarios,onAddScenarios])
     
     const handleAddRecommendation = () => {
         setRecommendations([...recommendations, recommendation]);
+        setRecommendation("");
         };
 
     const handleSubmit = (e) => {
@@ -40,8 +40,8 @@ export default function ScenarioForm({ onAddScenarios }) {
 
   
   return (
-        <form onSubmit={handleSubmit}>
-        <Typography component="h1" variant="h5">
+        <div onSubmit={handleSubmit}>
+        <Typography component="h1" variant="h5" align="center" sx={{ marginTop: '16px', marginBottom: '16px' }}>
             Scenarios Creation
         </Typography>
         <Grid container spacing={2}>
@@ -113,7 +113,16 @@ export default function ScenarioForm({ onAddScenarios }) {
                 </Button>
             </Grid>
             <Grid item xs={12}>
-            <Button variant="contained" color="primary" type="submit" fullWidth>
+                <ul>
+                    {recommendations.map((recommendation, index) => (
+                    <li key={index}>
+                        <Typography>{recommendation}</Typography>
+                    </li>
+                    ))}
+                </ul>
+            </Grid>
+            <Grid item xs={12}>
+            <Button variant="contained" color="primary" onClick={handleSubmit} fullWidth>
                 Add Scenario
             </Button>
             </Grid>
@@ -130,6 +139,6 @@ export default function ScenarioForm({ onAddScenarios }) {
                 </Grid>
             </div>
         </Grid>
-        </form>
+        </div>
   );
 }

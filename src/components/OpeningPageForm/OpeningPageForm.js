@@ -39,9 +39,6 @@ const useStyles = makeStyles((theme) => ({
 
 function OpeningPageForm() {
   const classes = useStyles();
-  const [documentName, setDocumentName] = useState('');
-  const [date, setDate] = useState('');
-  const [companyName, setCompanyName] = useState('');
   const [imageData, setImageData] = useState('');
   const [formData, setFormData] = useState({companyName: '',documentName: '', imageTag: '',date: ''});
   const [scenariosData, setSceneriosData] = useState('');
@@ -51,7 +48,8 @@ function OpeningPageForm() {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setFormData({...formData, [name]: reader.result})
+        setFormData({...formData, [name]: reader.result});
+        setImageData(reader.result);
       };
       reader.readAsDataURL(file);
     }
@@ -109,6 +107,7 @@ function OpeningPageForm() {
   
   
   return (
+    
     <Container component="main" maxWidth="md">
       <div className={classes.formContainer}>
         <img src={logo} alt="Company Logo" className={classes.logo} />
@@ -165,10 +164,20 @@ function OpeningPageForm() {
                 name='imageTag'
               />
               <label htmlFor="raised-button-file">
+              <Grid container justifyContent="center">
                 <Button variant="contained" color="secondary" component="span" className={classes.button}>
                   Add Company Image
                 </Button>
+              </Grid>
               </label>
+            </Grid>
+              {imageData && (
+                <Grid item xs={12} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',}}>
+                  <img src={imageData} alt="Chosen Company" style={{ maxWidth: '25%', height: 'auto' }} />
+                </Grid>
+              )}
+            <Grid item xs={12}>
+              <ScenarioForm onAddScenarios={AddScenarios} />
             </Grid>
             <Grid item xs={12}>
               <Button
@@ -184,7 +193,6 @@ function OpeningPageForm() {
             </Grid>
           </Grid>
         </form>
-        <ScenarioForm onAddScenarios={AddScenarios} />
       </div>
     </Container>
   );
