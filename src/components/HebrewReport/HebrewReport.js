@@ -1,14 +1,15 @@
 import React from 'react';
 import { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Container, Typography, TextField, Grid, Button } from '@material-ui/core';
+import { Container, Typography, TextField, Grid, Button } from '@mui/material';
 import logo from '../../images/logo.png';
 import testFile from '../../Doc/hebrew report.docx';
 import Docxtemplater from 'docxtemplater';
 import { saveAs } from 'file-saver';
 import PizZip from 'pizzip';
 import ImageModule from 'docxtemplater-image-module-free';
-import DefenceRules from '../DefenceRules/DefenceRules'
+import HebrewScenarioForm from '../ScenarioForm/HebrewScenarioForm';
+
 
 const useStyles = makeStyles((theme) => ({
     formContainer: {
@@ -40,7 +41,8 @@ function HebrewReportForm() {
     const classes = useStyles();
     const [imageData, setImageData] = useState('');
     const [formData, setFormData] = useState({companyName: '',documentName: '', imageTag: '',date: ''});
-    const [DefenceRulesData, setDefenceRulesData] = useState('');
+    const [scenariosData, setSceneriosData] = useState('');
+
 
     const handleImageChange = (event, name) => {
         const file = event.target.files[0];
@@ -59,11 +61,12 @@ function HebrewReportForm() {
         setFormData({...formData,[name]: value,});
       };
     
-      const addDefenceRules = (defenceRules) => {
-        setDefenceRulesData(defenceRules);
+
+      const AddScenarios = (scenarios) => {
+        setSceneriosData(scenarios);
       };
     
-      async function generateDocx(formData, DefenceRulesData) {
+      async function generateDocx(formData, scenariosData) {
         const templateResponse = await fetch(testFile);
         const templateArrayBuffer = await templateResponse.arrayBuffer();
         const zip = new PizZip(templateArrayBuffer);
@@ -84,8 +87,10 @@ function HebrewReportForm() {
     
         doc.setData({
           ...formData,
-          DefenceRules: (DefenceRulesData).map((DefenceRule, index) => ({
-            ...DefenceRule
+          scenarios: (scenariosData).map((scenario, index) => ({
+            ...scenario,
+            edrRecommendations: scenario.edrRecommendations,
+            sysmonRecommendations: scenario.sysmonRecommendations
           })),
         });
         doc.render();
@@ -96,7 +101,7 @@ function HebrewReportForm() {
     
       const handleSubmit = (event) => {
         event.preventDefault();    
-        generateDocx(formData, DefenceRulesData);
+        generateDocx(formData, scenariosData);
       }
 
   return (
@@ -104,7 +109,7 @@ function HebrewReportForm() {
       <div className={classes.formContainer}>
         <img src={logo} alt="Company Logo" className={classes.logo} />
         <Typography component="h1" variant="h5">
-          דף פתיחה (Opening Page)
+          דף פתיחה 
         </Typography>
         <form className={classes.form} noValidate>
           <Grid container spacing={2}>
@@ -117,6 +122,8 @@ function HebrewReportForm() {
                 label="כותרת"
                 name="title"
                 onChange={handleInputChange}
+                dir="rtl"
+                inputProps={{ style: { textAlign: 'right' } }}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -128,6 +135,8 @@ function HebrewReportForm() {
                 label="תאריך"
                 name="date"
                 type="date"
+                dir="rtl"
+                inputProps={{ style: { textAlign: 'right' } }}
                 InputLabelProps={{
                   shrink: true,
                 }}
@@ -147,7 +156,7 @@ function HebrewReportForm() {
               <label htmlFor="raised-button-file">
                 <Grid container justifyContent="center">
                   <Button variant="contained" color="secondary" component="span" className={classes.button}>
-                    תמונת החברה (Add Company Image)
+                    תמונת החברה 
                   </Button>
                 </Grid>
               </label>
@@ -158,7 +167,7 @@ function HebrewReportForm() {
               </Grid>
             )}
             <Grid item xs={12}>
-              <DefenceRules onAddDefenceRules={addDefenceRules}/>
+              <HebrewScenarioForm onAddScenarios={AddScenarios} />
             </Grid>
             <Grid item xs={12}>
               <Button
@@ -169,7 +178,7 @@ function HebrewReportForm() {
                 className={classes.submit}
                 onClick={handleSubmit}
               >
-                שלח (Submit)
+                שלח
               </Button>
             </Grid>
           </Grid>

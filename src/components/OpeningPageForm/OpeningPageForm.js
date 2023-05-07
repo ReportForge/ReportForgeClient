@@ -1,7 +1,7 @@
 import React from 'react';
 import { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Container, Typography, TextField, Grid, Button } from '@material-ui/core';
+import { Container, Typography, TextField, Grid, Button } from '@mui/material';
 import logo from '../../images/logo.png';
 import testFile from '../../Doc/test.docx';
 import Docxtemplater from 'docxtemplater';
@@ -65,8 +65,7 @@ function OpeningPageForm() {
   };
 
   async function generateDocx(formData, scenariosData) {
-    console.log(formData);
-    console.log(scenariosData);
+    
     const templateResponse = await fetch(testFile);
     const templateArrayBuffer = await templateResponse.arrayBuffer();
     const zip = new PizZip(templateArrayBuffer);

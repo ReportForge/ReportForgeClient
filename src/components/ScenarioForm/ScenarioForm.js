@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { TextField, MenuItem, Button, Grid, Typography } from "@mui/material";
+import { TextField, MenuItem, Button, Grid, Typography, Paper } from "@mui/material";
 import Scenario from "../../components/Scenario/Scenario";
 
 const difficulties = ["Low", "Medium", "High"];
@@ -40,7 +40,7 @@ export default function ScenarioForm({ onAddScenarios }) {
 
   
   return (
-        <div onSubmit={handleSubmit}>
+        <Paper onSubmit={handleSubmit}>
         <Typography component="h1" variant="h5" align="center" sx={{ marginTop: '16px', marginBottom: '16px' }}>
             Scenarios Creation
         </Typography>
@@ -94,23 +94,27 @@ export default function ScenarioForm({ onAddScenarios }) {
                 ))}
             </TextField>
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12}>
                 <TextField
                 label="Security Recommendation"
                 value={recommendation}
                 onChange={(e) => setRecommendation(e.target.value)}
                 fullWidth
+                multiline
+                rows={3}
+                style={{ width: '100%', height: '100px' }}
                 />
             </Grid>
-            <Grid item xs={6}>
-                <Button
-                    variant="contained"
-                    color="secondary"
-                    onClick={handleAddRecommendation}
-                    fullWidth
-                    >
-                    Add Recommendation
-                </Button>
+            <Grid container alignItems="center" justifyContent="center" style={{ marginTop:"10px" }}>
+                <Grid item >
+                    <Button
+                        variant="contained"
+                        color="secondary"
+                        onClick={handleAddRecommendation}
+                        >
+                        Add Recommendation
+                    </Button>
+                </Grid>
             </Grid>
             <Grid item xs={12}>
                 <ul>
@@ -139,6 +143,6 @@ export default function ScenarioForm({ onAddScenarios }) {
                 </Grid>
             </div>
         </Grid>
-        </div>
+        </Paper>
   );
 }

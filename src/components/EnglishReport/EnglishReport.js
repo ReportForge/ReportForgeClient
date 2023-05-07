@@ -1,6 +1,6 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Paper, Typography } from '@material-ui/core';
+import { Paper, Typography } from '@mui/material';
 import OpeningPageForm from '../OpeningPageForm/OpeningPageForm';
 
 const useStyles = makeStyles((theme) => ({
@@ -20,7 +20,6 @@ function EnglishReport() {
       <Typography variant="h4" className={classes.title}>
         English Report
       </Typography>
-      {/* Add your additional components here */}
         <OpeningPageForm/>
     </Paper>
   );
