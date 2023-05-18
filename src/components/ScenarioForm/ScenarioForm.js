@@ -13,7 +13,8 @@ export default function ScenarioForm({ onAddScenarios }) {
   const [scenarios, setScenarios] = useState([]);
   const [recommendation, setRecommendation] = useState("");
   const [recommendations, setRecommendations] = useState([]);
-
+  const [photos, setPhotos] = useState([]);
+  const [photosToShow, setPhotosToShow] = useState([]);
 
     useEffect(() => {
         onAddScenarios(scenarios);
@@ -24,6 +25,26 @@ export default function ScenarioForm({ onAddScenarios }) {
         setRecommendation("");
         };
 
+
+    const handleFileUpload = (event) => {
+        const files = Array.from(event.target.files);
+        setPhotosToShow((prevPhotosToShow) => [...prevPhotosToShow, ...files]);
+        
+        if (files.length > 0) {
+            files.forEach((file) => {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setPhotos((prevPhotos) => [
+                ...prevPhotos,
+                reader.result,
+                ]);
+            };
+            reader.readAsDataURL(file);
+            });
+        }
+        };
+          
+
     const handleSubmit = (e) => {
         e.preventDefault();
         const newScenario = {
@@ -31,12 +52,16 @@ export default function ScenarioForm({ onAddScenarios }) {
             scenarioTitle: scenarioTitle,
             scenarioDifficulty: scenarioDifficulty,
             scenarioImpact: scenarioImpact,
-            recommendations: recommendations
+            recommendations: recommendations,
+            photos: photos,
+            photosToShow: photosToShow,
         }
         setScenarios([...scenarios, newScenario]);
         setScenarioNumber(scenarioNumber + 1);
         setRecommendations([]);
+        setPhotos([]);
     };
+
 
   
   return (
@@ -124,6 +149,34 @@ export default function ScenarioForm({ onAddScenarios }) {
                     </li>
                     ))}
                 </ul>
+            </Grid>
+            <Grid item xs={12}>
+                <input
+                accept="image/*"
+                type="file"
+                onChange={handleFileUpload}
+                multiple
+                style={{ display: "none" }}
+                id="upload-photo"
+                />
+                <label htmlFor="upload-photo">
+                    <Button variant="outlined" color="primary" component="span">
+                        Upload Photos
+                    </Button>
+                </label>
+            </Grid>
+            <Grid item xs={12}>
+                <Grid container spacing={2}>
+                    {photosToShow.map((photo, index) => (
+                    <Grid item key={index}>
+                        <img
+                        src={URL.createObjectURL(photo)}
+                        alt={`uploaded-${index}`}
+                        style={{ maxWidth: "400px", maxHeight: "300px" }}
+                        />
+                    </Grid>
+                    ))}
+                </Grid>
             </Grid>
             <Grid item xs={12}>
             <Button variant="contained" color="primary" onClick={handleSubmit} fullWidth>

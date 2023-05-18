@@ -65,30 +65,36 @@ function OpeningPageForm() {
   };
 
   async function generateDocx(formData, scenariosData) {
-    
     const templateResponse = await fetch(testFile);
     const templateArrayBuffer = await templateResponse.arrayBuffer();
     const zip = new PizZip(templateArrayBuffer);
   
     const imageModuleOptions = {
-      centered: false, // Set to true if you want the image to be centered in the cell
+      centered: false,
       getImage: (tagValue, tagName) => {
-        return atob(tagValue.split(',')[1]);
+        // Only handle imageTag
+        if (tagName === 'imageTag') {
+          return atob(tagValue.split(',')[1]);
+        }
       },
       getSize: (img, tagValue, tagName) => {
-        return [200, 100]; // You can customize the image size here, e.g., [width, height]
+        // Only handle imageTag
+        if (tagName === 'imageTag') {
+          return [200, 100]; // You can customize the image size here, e.g., [width, height]
+        }
       },
     };
   
     const doc = new Docxtemplater()
       .attachModule(new ImageModule(imageModuleOptions))
       .loadZip(zip);
-
+  
     doc.setData({
       ...formData,
       scenarios: (scenariosData).map((scenario, index) => ({
         ...scenario,
         recommendations: scenario.recommendations,
+        photos: scenario.photos.map((photo) => ({imageTag: photo})),
         // Add any other necessary transformations to the scenario object here
       })),
     });
@@ -97,6 +103,7 @@ function OpeningPageForm() {
     const output = doc.getZip().generate({ type: 'blob' });
     saveAs(output, 'output.docx');
   }
+  
 
   const handleSubmit = (event) => {
     event.preventDefault();    
