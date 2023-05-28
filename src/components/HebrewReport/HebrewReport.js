@@ -72,12 +72,18 @@ function HebrewReportForm() {
         const zip = new PizZip(templateArrayBuffer);
       
         const imageModuleOptions = {
-          centered: false, // Set to true if you want the image to be centered in the cell
+          centered: false,
           getImage: (tagValue, tagName) => {
-            return atob(tagValue.split(',')[1]);
+            // Only handle imageTag
+            if (tagName === 'imageTag') {
+              return atob(tagValue.split(',')[1]);
+            }
           },
           getSize: (img, tagValue, tagName) => {
-            return [200, 100]; // You can customize the image size here, e.g., [width, height]
+            // Only handle imageTag
+            if (tagName === 'imageTag') {
+              return [200, 100]; // You can customize the image size here, e.g., [width, height]
+            }
           },
         };
       
@@ -90,7 +96,8 @@ function HebrewReportForm() {
           scenarios: (scenariosData).map((scenario, index) => ({
             ...scenario,
             edrRecommendations: scenario.edrRecommendations,
-            sysmonRecommendations: scenario.sysmonRecommendations
+            sysmonRecommendations: scenario.sysmonRecommendations,
+            photos: scenario.photos.map((photo) => ({imageTag: photo})),
           })),
         });
         doc.render();

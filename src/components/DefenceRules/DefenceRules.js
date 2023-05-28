@@ -24,7 +24,6 @@ export default function DefenceRules({ onAddDefenceRules }) {
             defenceRuleTitle: defenceRuleTitle,
         }
         setDefenceRules([...defenceRules, newDefenceRule]);
-        console.log(defenceRules);
         setDefenceRuleNumber(defenceRuleNumber + 1);
     };
 

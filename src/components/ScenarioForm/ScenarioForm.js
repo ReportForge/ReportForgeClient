@@ -60,6 +60,7 @@ export default function ScenarioForm({ onAddScenarios }) {
         setScenarioNumber(scenarioNumber + 1);
         setRecommendations([]);
         setPhotos([]);
+        setPhotosToShow([]);
     };
 
 
