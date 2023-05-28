@@ -47,6 +47,7 @@ export default function ScenarioForm({ onAddScenarios }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        console.log(photosToShow);
         const newScenario = {
             scenarioNumber: scenarioNumber,
             scenarioTitle: scenarioTitle,

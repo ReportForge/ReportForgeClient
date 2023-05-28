@@ -23,14 +23,23 @@ export default function Scenario({ scenario }) {
       </ul>
       <Typography variant="subtitle1">Attached Photos:</Typography>
       <div>
-        {scenario.photosToShow.map((photo, index) => (
-          <img
-            src={URL.createObjectURL(photo)}
-            alt={`uploaded-${index}`}
-            key={index}
-            style={{ maxWidth: "100px", maxHeight: "100px", marginRight: "8px", marginBottom: "8px" }}
-          />
-        ))}
+        {(scenario.photosToShow && scenario.photosToShow.length > 0)
+          ? scenario.photosToShow.map((photo, index) => (
+              <img
+                key={index}
+                src={URL.createObjectURL(photo)}
+                alt={`scenario-${index}`}
+                style={{ maxWidth: "400px", maxHeight: "300px" }}
+              />
+            ))
+          : scenario.photos.map((photo, index) => (
+              <img
+                key={index}
+                src={photo}
+                alt={`scenario-${index}`}
+                style={{ maxWidth: "400px", maxHeight: "300px" }}
+              />
+            ))}
       </div>
     </ScenarioWrapper>
   );

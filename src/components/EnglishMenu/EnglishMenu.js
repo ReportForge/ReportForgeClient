@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Container, Box } from '@material-ui/core';
+import { Button, Box } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { Link } from 'react-router-dom';
 import WhiteHatLogo from '../../images/ReportForgeBackground.png';
@@ -33,12 +33,16 @@ const EnglishMenu = () => {
             Create a Report
             </Button>
         </Link>
-        <Button variant="contained" color="primary" className={classes.button}>
-          Create Scenario
-        </Button>
-        <Button variant="contained" color="primary" className={classes.button}>
-          Approve and Edit Scenario
-        </Button>
+        <Link to="/scenarioCreate">
+            <Button variant="contained" color="primary" className={classes.button}>
+            Create Scenario
+            </Button>
+        </Link>
+        <Link to="/englishScenarioList">
+          <Button variant="contained" color="primary" className={classes.button}>
+            Approve and Edit Scenario
+          </Button>
+        </Link>
       </Box>
     </div>
   );

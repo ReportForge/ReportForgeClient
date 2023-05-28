@@ -20,5 +20,9 @@ export function useApi() {
     return await axios.delete(`${baseURL}/scenarios/${id}`);
   };
 
-  return { createScenario, getScenarios, updateScenario, deleteScenario };
+  const getLatestScenarioNumber = async () => {
+    return await axios.get(`${baseURL}/scenarios/latest-number`);
+  };
+
+  return { createScenario, getScenarios, updateScenario, deleteScenario, getLatestScenarioNumber };
 }
