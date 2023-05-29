@@ -17,6 +17,12 @@ export default function ScenarioCreate() {
   const [photos, setPhotos] = useState([]);
   const [photosToShow, setPhotosToShow] = useState([]);
   const [latestScenarioNumber, setLatestScenarioNumber] = useState(0);
+  const [tactic, setTactic] = useState("");
+  const [description, setDescription] = useState("");
+  const [attackFlow, setAttackFlow] = useState([]);
+  const [attackFlowToShow, setAttackFlowToShow] = useState([]);
+
+
 
   useEffect(() => {
     fetchLatestScenarioNumber();
@@ -55,6 +61,25 @@ export default function ScenarioCreate() {
     }
   };
 
+  const handleAttackFlowUpload = (event) => {
+    const files = Array.from(event.target.files);
+    setAttackFlowToShow((prevAttackFlowToShow) => [...prevAttackFlowToShow, ...files]);
+  
+    files.forEach((file) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setAttackFlow((prevAttackFlow) => [
+          ...prevAttackFlow,
+          reader.result,
+        ]);
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+  
+  
+  
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -65,6 +90,9 @@ export default function ScenarioCreate() {
         scenarioImpact: scenarioImpact,
         recommendations: recommendations,
         photos: photos,
+        tactic: tactic,
+        description: description,
+        attackFlow: attackFlow,
     }
     try {
       const response = await createScenario(newScenario);
@@ -74,6 +102,14 @@ export default function ScenarioCreate() {
       setPhotos([]);
       setPhotosToShow([]);
       setLatestScenarioNumber(latestScenarioNumber + 1);
+      setTactic("");
+      setDescription("");
+      setAttackFlow([]);
+      setAttackFlowToShow([]);
+      setScenarioDifficulty("");
+      setScenarioImpact("");
+      setScenarioTitle("");
+
     } catch (error) {
       console.log(error); // handle your error here
     }
@@ -84,60 +120,150 @@ export default function ScenarioCreate() {
     <Typography component="h1" variant="h5" align="center" sx={{ marginTop: '16px', marginBottom: '16px' }}>
         Scenarios Creation
     </Typography>
-    <Grid container spacing={2}>
-        <Grid item xs={3}>
-        <TextField
-            label="Scenario Number"
-            value={scenarioNumber}
-            disabled
-            fullWidth
-        />
+    <Grid container spacing={3} justifyContent="center" alignItems="center">
+    <Grid item xs={12}> {/* This is your first row */}
+          <Grid container spacing={3} justifyContent="center" alignItems="center">
+            <Grid item xs={3}>
+              <TextField
+                  label="Scenario Number"
+                  value={scenarioNumber}
+                  disabled
+                  fullWidth
+              />
+            </Grid>
+            <Grid item xs={5}>
+              <TextField
+                  label="Scenario Title"
+                  value={scenarioTitle}
+                  onChange={(e) => setScenarioTitle(e.target.value)}
+                  required
+                  fullWidth
+              />
+            </Grid>
+          </Grid>
         </Grid>
-        <Grid item xs={5}>
-        <TextField
-            label="Scenario Title"
-            value={scenarioTitle}
-            onChange={(e) => setScenarioTitle(e.target.value)}
-            required
-            fullWidth
-        />
-        </Grid>
-        <Grid item xs={4}></Grid>
-        <Grid item xs={4}>
-        <TextField
-            select
-            label="Scenario Difficulty"
-            value={scenarioDifficulty}
-            onChange={(e) => setScenarioDifficulty(e.target.value)}
-            required
-            fullWidth
-        >
-            {difficulties.map((difficulty) => (
-            <MenuItem key={difficulty} value={difficulty}>
-                {difficulty}
-            </MenuItem>
-            ))}
-        </TextField>
-        </Grid>
-        <Grid item xs={4}>
-        <TextField
-            select
-            label="Scenario Level of Impact"
-            value={scenarioImpact}
-            onChange={(e) => setScenarioImpact(e.target.value)}
-            required
-            fullWidth
-        >
-            {impacts.map((impact) => (
-            <MenuItem key={impact} value={impact}>
-                {impact}
-            </MenuItem>
-            ))}
-        </TextField>
+        <Grid item xs={12}> {/* This is your second row */}
+          <Grid container spacing={3} justifyContent="center" alignItems="center">
+            <Grid item xs={4}>
+              <TextField
+                  select
+                  label="Scenario Difficulty"
+                  value={scenarioDifficulty}
+                  onChange={(e) => setScenarioDifficulty(e.target.value)}
+                  required
+                  fullWidth
+              >
+                  {difficulties.map((difficulty) => (
+                  <MenuItem key={difficulty} value={difficulty}>
+                      {difficulty}
+                  </MenuItem>
+                  ))}
+              </TextField>
+            </Grid>
+            <Grid item xs={4}>
+              <TextField
+                  select
+                  label="Scenario Level of Impact"
+                  value={scenarioImpact}
+                  onChange={(e) => setScenarioImpact(e.target.value)}
+                  required
+                  fullWidth
+              >
+                  {impacts.map((impact) => (
+                  <MenuItem key={impact} value={impact}>
+                      {impact}
+                  </MenuItem>
+                  ))}
+              </TextField>
+            </Grid>
+          </Grid>
         </Grid>
         <Grid item xs={8}>
             <TextField
-            label="Security Recommendation"
+              label="Tactic – Code Execution and Persistence"
+              value={tactic}
+              onChange={(e) => setTactic(e.target.value)}
+              required
+              fullWidth
+              multiline
+              rows={3}
+            />
+          </Grid>
+          <Grid item xs={8}>
+            <TextField
+              label="Description of the Attack"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              required
+              fullWidth
+              multiline
+              rows={3}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <Grid container justifyContent="center">
+              <input
+                accept="image/*"
+                type="file"
+                multiple
+                onChange={handleAttackFlowUpload}
+                style={{ display: "none" }}
+                id="upload-attack-flow"
+              />
+              <label htmlFor="upload-attack-flow">
+                <Button variant="outlined" color="primary" component="span">
+                  Upload Attack Flow
+                </Button>
+              </label>
+            </Grid>
+          </Grid>
+          <Grid item xs={12}>
+            <Grid container spacing={2} justifyContent="center" alignItems="center">
+              {attackFlowToShow.map((photo, index) => (
+                <Grid item key={index}>
+                  <img
+                    src={URL.createObjectURL(photo)}
+                    alt={`uploaded-${index}`}
+                    style={{ maxWidth: "200px", maxHeight: "100px" }}
+                  />
+                </Grid>
+              ))}
+            </Grid>
+          </Grid>
+          <Grid item xs={12}>
+            <Grid container justifyContent="center">
+              <input
+                accept="image/*"
+                type="file"
+                onChange={handleFileUpload}
+                multiple
+                style={{ display: "none" }}
+                id="upload-photo"
+              />
+              <label htmlFor="upload-photo">
+                <Button variant="outlined" color="primary" component="span">
+                  Upload Proof of Concept Photos
+                </Button>
+              </label>
+            </Grid>
+          </Grid>
+          <Grid item xs={12}>
+            <Grid container spacing={2} justifyContent="center" alignItems="center">
+              {photosToShow.map((photo, index) => (
+                <Grid item key={index}>
+                  <img
+                    src={URL.createObjectURL(photo)}
+                    alt={`uploaded-${index}`}
+                    style={{ maxWidth: "200px", maxHeight: "100px" }}
+                  />
+                </Grid>
+              ))}
+            </Grid>
+          </Grid>
+
+        <Grid item xs={8}>
+            <TextField
+            label="Mitigations"
             value={recommendation}
             onChange={(e) => setRecommendation(e.target.value)}
             fullWidth
@@ -153,46 +279,21 @@ export default function ScenarioCreate() {
                     color="secondary"
                     onClick={handleAddRecommendation}
                     >
-                    Add Recommendation
+                    Add Mitigations
                 </Button>
             </Grid>
         </Grid>
         <Grid item xs={12}>
-            <ul>
-                {recommendations.map((recommendation, index) => (
-                <li key={index}>
-                    <Typography>{recommendation}</Typography>
-                </li>
-                ))}
-            </ul>
-        </Grid>
-        <Grid item xs={12}>
-            <input
-            accept="image/*"
-            type="file"
-            onChange={handleFileUpload}
-            multiple
-            style={{ display: "none" }}
-            id="upload-photo"
-            />
-            <label htmlFor="upload-photo">
-                <Button variant="outlined" color="primary" component="span">
-                    Upload Photos
-                </Button>
-            </label>
-        </Grid>
-        <Grid item xs={12}>
-            <Grid container spacing={2}>
-                {photosToShow.map((photo, index) => (
-                <Grid item key={index}>
-                    <img
-                    src={URL.createObjectURL(photo)}
-                    alt={`uploaded-${index}`}
-                    style={{ maxWidth: "400px", maxHeight: "300px" }}
-                    />
-                </Grid>
-                ))}
-            </Grid>
+          <Grid container alignItems="center" justifyContent="center" style={{ marginTop:"10px" }}>
+
+              <ul>
+                  {recommendations.map((recommendation, index) => (
+                  <li key={index}>
+                      <Typography>{recommendation}</Typography>
+                  </li>
+                  ))}
+              </ul>
+          </Grid>
         </Grid>
         <Grid item xs={12}>
         <Button variant="contained" color="primary" onClick={handleSubmit} fullWidth>
@@ -210,24 +311,37 @@ export default function ScenarioCreate() {
               <Typography><b>Title:</b> {scenarioTitle}</Typography>
               <Typography><b>Difficulty:</b> {scenarioDifficulty}</Typography>
               <Typography><b>Impact:</b> {scenarioImpact}</Typography>
-              <Typography><b>Recommendations:</b></Typography>
-              <ul>
-                {recommendations.map((recommendation, index) => (
-                  <li key={index}>{recommendation}</li>
-                ))}
-              </ul>
-              <Typography><b>Photos:</b></Typography>
-              <Grid container spacing={2}>
+              <Typography rows={3}><b>Tactic:</b> {tactic}</Typography>
+              <Typography><b>Description:</b> {description}</Typography>
+              <Typography><b>Attack Flow:</b></Typography>
+              <Grid container spacing={2} justifyContent="center" alignItems="center">
+              {attackFlowToShow.map((flow, index) => (
+                <img
+                  key={index}
+                  src={URL.createObjectURL(flow)}
+                  alt={`Attack Flow ${index}`}
+                  style={{ maxWidth: "200px", maxHeight: "100px" }}
+                />
+              ))}
+              </Grid>
+              <Typography sx={{ marginTop: '16px'}}><b>Proof of Concept:</b></Typography>
+              <Grid container spacing={2} justifyContent="center" alignItems="center">
                 {photosToShow.map((photo, index) => (
                   <Grid item key={index}>
                     <img
                       src={URL.createObjectURL(photo)}
                       alt={`uploaded-${index}`}
-                      style={{ maxWidth: "400px", maxHeight: "300px" }}
+                      style={{ maxWidth: "200px", maxHeight: "100px" }}
                     />
                   </Grid>
                 ))}
               </Grid>
+              <Typography sx={{ marginTop: '16px'}}><b>Mitigations:</b></Typography>
+              <ul>
+                {recommendations.map((recommendation, index) => (
+                  <li key={index}>{recommendation}</li>
+                ))}
+              </ul>
             </Paper>
           </Grid>
         </Grid>
