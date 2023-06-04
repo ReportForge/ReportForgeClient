@@ -1,7 +1,7 @@
 import React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Container, Typography, TextField, Grid, Button } from '@mui/material';
+import { Container, Typography, TextField, Grid, Button, Checkbox, FormControlLabel, CircularProgress } from '@mui/material';
 import logo from '../../images/logo.png';
 import testFile from '../../Doc/test.docx';
 import Docxtemplater from 'docxtemplater';
@@ -9,6 +9,8 @@ import { saveAs } from 'file-saver';
 import PizZip from 'pizzip';
 import ImageModule from 'docxtemplater-image-module-free';
 import ScenarioForm from "../../components/ScenarioForm/ScenarioForm";
+import { useApi } from "../../api";
+import Scenario from "../Scenario/Scenario";
 
 const useStyles = makeStyles((theme) => ({
   formContainer: {
@@ -39,9 +41,38 @@ const useStyles = makeStyles((theme) => ({
 
 function OpeningPageForm() {
   const classes = useStyles();
+  const { getScenarios } = useApi();
+  const [selectedScenarios, setSelectedScenarios] = useState([]);
   const [imageData, setImageData] = useState('');
   const [formData, setFormData] = useState({companyName: '',documentName: '', imageTag: '',date: ''});
   const [scenariosData, setSceneriosData] = useState('');
+  const [scenarios, setScenarios] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [counters, setCounters] = useState(0);
+
+  useEffect(() => {
+    const fetchScenarios = async () => {
+      try {
+        const response = await getScenarios();
+        const approvedScenarios = response.data.filter(scenario => scenario.status === 'Approved');
+        setScenarios(approvedScenarios);
+        setIsLoading(false);
+      } catch (error) {
+        console.log(error);
+        setIsLoading(false);
+      }
+    };
+    fetchScenarios();
+  }, []);
+  
+
+  const handleScenarioSelectionChange = (scenario, isChecked) => {
+    if (isChecked) {
+      setSelectedScenarios((prevScenarios) => [...prevScenarios, scenario]);
+    } else {
+      setSelectedScenarios((prevScenarios) => prevScenarios.filter((sc) => sc.name !== scenario.name));
+    }
+  };
 
   const handleImageChange = (event, name) => {
     const file = event.target.files[0];
@@ -60,11 +91,11 @@ function OpeningPageForm() {
     setFormData({...formData,[name]: value,});
   };
 
-  const AddScenarios = (scenarios) => {
-    setSceneriosData(scenarios);
-  };
+  // const AddScenarios = (scenarios) => {
+  //   setSceneriosData(scenarios);
+  // };
 
-  async function generateDocx(formData, scenariosData) {
+  async function generateDocx(formData, scenarios) {
     const templateResponse = await fetch(testFile);
     const templateArrayBuffer = await templateResponse.arrayBuffer();
     const zip = new PizZip(templateArrayBuffer);
@@ -80,7 +111,7 @@ function OpeningPageForm() {
       getSize: (img, tagValue, tagName) => {
         // Only handle imageTag
         if (tagName === 'imageTag') {
-          return [200, 100]; // You can customize the image size here, e.g., [width, height]
+          return [600, 150]; // You can customize the image size here, e.g., [width, height]
         }
       },
     };
@@ -91,10 +122,11 @@ function OpeningPageForm() {
   
     doc.setData({
       ...formData,
-      scenarios: (scenariosData).map((scenario, index) => ({
+      scenarios: (scenarios).map((scenario, index) => ({
         ...scenario,
         recommendations: scenario.recommendations,
         photos: scenario.photos.map((photo) => ({imageTag: photo})),
+        attackFlow: scenario.attackFlow.map((attackFlow) => ({imageTag: attackFlow})),
         // Add any other necessary transformations to the scenario object here
       })),
     });
@@ -107,7 +139,8 @@ function OpeningPageForm() {
 
   const handleSubmit = (event) => {
     event.preventDefault();    
-    generateDocx(formData, scenariosData);
+    generateDocx(formData, selectedScenarios);
+    setSelectedScenarios([]);
   }
 
   
@@ -183,7 +216,29 @@ function OpeningPageForm() {
                 </Grid>
               )}
             <Grid item xs={12}>
-              <ScenarioForm onAddScenarios={AddScenarios} />
+              <Typography variant="h6">
+                Select Scenarios
+              </Typography>
+              {!isLoading ? (
+                scenarios.map((scenario, index) => (
+                  <div key={index}>
+                    <Scenario scenario={scenario} />
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={selectedScenarios.includes(scenario)}
+                          onChange={(event) => handleScenarioSelectionChange(scenario, event.target.checked)}
+                          name={scenario.name}
+                          color="primary"
+                        />
+                      }
+                      label="Select this scenario"
+                    />
+                  </div>
+                ))
+              ) : (
+                <CircularProgress /> 
+              )}
             </Grid>
             <Grid item xs={12}>
               <Button

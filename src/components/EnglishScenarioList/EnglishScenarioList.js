@@ -40,7 +40,9 @@ export default function ScenarioList() {
             <Scenario key={index} scenario={scenario} />
           ))
         ) : (
-          <Typography variant="body1">No scenarios found.</Typography>
+          <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "80vh" }}>
+            <Typography variant="body1">No scenarios found.</Typography>
+          </Box>
         )
       )}
     </div>
