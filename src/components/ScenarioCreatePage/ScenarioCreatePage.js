@@ -1,28 +1,33 @@
 import React, { useState, useEffect } from "react";
 import { TextField, MenuItem, Button, Grid, Typography, Paper } from "@mui/material";
 import { useApi } from "../../api"; // Assuming your api.js is in the same directory level
+import { useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const difficulties = ["Low", "Medium", "High"];
 const impacts = ["Low", "Medium", "High"];
 
 export default function ScenarioCreate() {
-  const { createScenario, getLatestScenarioNumber } = useApi();
 
-  const [scenarioNumber, setScenarioNumber] = useState(0);
-  const [scenarioTitle, setScenarioTitle] = useState("");
-  const [scenarioDifficulty, setScenarioDifficulty] = useState("");
-  const [scenarioImpact, setScenarioImpact] = useState("");
-  const [recommendation, setRecommendation] = useState("");
-  const [recommendations, setRecommendations] = useState([]);
-  const [photos, setPhotos] = useState([]);
+  const location = useLocation();
+  const scenarioToEdit = location.state;
+  const { createScenario, getLatestScenarioNumber, updateScenario } = useApi();
+  const [scenarioNumber, setScenarioNumber] = useState(scenarioToEdit ? scenarioToEdit.scenarioNumber : 0);
+  const [scenarioTitle, setScenarioTitle] = useState(scenarioToEdit ? scenarioToEdit.scenarioTitle : '');
+  const [scenarioDifficulty, setScenarioDifficulty] = useState(scenarioToEdit ? scenarioToEdit.scenarioDifficulty : '');
+  const [scenarioImpact, setScenarioImpact] = useState(scenarioToEdit ? scenarioToEdit.scenarioImpact : '');
+  const [recommendation, setRecommendation] = useState(scenarioToEdit ? scenarioToEdit.recommendation : '');
+  const [recommendations, setRecommendations] = useState(scenarioToEdit ? scenarioToEdit.recommendations : []);
+  const [photos, setPhotos] = useState(scenarioToEdit ? scenarioToEdit.photos : []);
   const [photosToShow, setPhotosToShow] = useState([]);
   const [latestScenarioNumber, setLatestScenarioNumber] = useState(0);
-  const [tactic, setTactic] = useState("");
-  const [description, setDescription] = useState("");
-  const [attackFlow, setAttackFlow] = useState([]);
+  const [tactic, setTactic] = useState(scenarioToEdit ? scenarioToEdit.tactic : '');
+  const [description, setDescription] = useState(scenarioToEdit ? scenarioToEdit.description : '');
+  const [attackFlow, setAttackFlow] = useState(scenarioToEdit ? scenarioToEdit.attackFlow : '');
   const [attackFlowToShow, setAttackFlowToShow] = useState([]);
+  const navigate = useNavigate();
 
-
+  
 
   useEffect(() => {
     fetchLatestScenarioNumber();
@@ -32,12 +37,34 @@ export default function ScenarioCreate() {
     try {
       const response = await getLatestScenarioNumber();
       setLatestScenarioNumber(response.data.latestScenarioNumber);
-      setScenarioNumber(response.data.latestScenarioNumber + 1);
+      if(!scenarioToEdit){
+        setScenarioNumber(response.data.latestScenarioNumber + 1);
+      }
     } catch (error) {
       console.log(error);
     }
   };
 
+  const handleRemovePhoto = (photoIndex) => {
+    const newPhotosToShow = photosToShow.filter((photo, index) => index !== photoIndex);
+    const newPhotos = photos.filter((photo, index) => index !== photoIndex);
+  
+    setPhotosToShow(newPhotosToShow);
+    setPhotos(newPhotos);
+  };
+  
+  const handleRemoveAttackFlow = (flowIndex) => {
+    const newAttackFlowToShow = attackFlowToShow.filter((flow, index) => index !== flowIndex);
+    const newAttackFlow = attackFlow.filter((flow, index) => index !== flowIndex);
+  
+    setAttackFlowToShow(newAttackFlowToShow);
+    setAttackFlow(newAttackFlow);
+  };
+
+  const handleDeleteRecommendation = (recommendationIndex) => {
+    setRecommendations(recommendations.filter((_, index) => index !== recommendationIndex));
+  };
+  
   const handleAddRecommendation = () => {
     setRecommendations([...recommendations, recommendation]);
     setRecommendation("");
@@ -45,7 +72,9 @@ export default function ScenarioCreate() {
 
   const handleFileUpload = (event) => {
     const files = Array.from(event.target.files);
-    setPhotosToShow((prevPhotosToShow) => [...prevPhotosToShow, ...files]);
+    if(!scenarioToEdit){
+      setPhotosToShow((prevPhotosToShow) => [...prevPhotosToShow, ...files]);
+    }
     
     if (files.length > 0) {
         files.forEach((file) => {
@@ -63,8 +92,9 @@ export default function ScenarioCreate() {
 
   const handleAttackFlowUpload = (event) => {
     const files = Array.from(event.target.files);
-    setAttackFlowToShow((prevAttackFlowToShow) => [...prevAttackFlowToShow, ...files]);
-  
+    if(!scenarioToEdit){
+      setAttackFlowToShow((prevAttackFlowToShow) => [...prevAttackFlowToShow, ...files]);
+    }
     files.forEach((file) => {
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -83,25 +113,35 @@ export default function ScenarioCreate() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const newScenario = {
-        scenarioNumber: latestScenarioNumber + 1,
-        scenarioTitle: scenarioTitle,
-        scenarioDifficulty: scenarioDifficulty,
-        scenarioImpact: scenarioImpact,
-        recommendations: recommendations,
-        photos: photos,
-        tactic: tactic,
-        description: description,
-        attackFlow: attackFlow,
-    }
+  
+    const scenario = {
+      scenarioNumber: scenarioToEdit ? scenarioToEdit.scenarioNumber : latestScenarioNumber + 1,
+      scenarioTitle: scenarioTitle,
+      scenarioDifficulty: scenarioDifficulty,
+      scenarioImpact: scenarioImpact,
+      recommendations: recommendations,
+      photos: photos,
+      tactic: tactic,
+      description: description,
+      attackFlow: attackFlow,
+    };
+  
     try {
-      const response = await createScenario(newScenario);
+      let response;
+      if (scenarioToEdit) {
+        response = await updateScenario(scenarioToEdit._id, scenario);
+        navigate(`/englishScenarioList/${response.data._id}`);
+      } else {
+        // Otherwise, call the create API
+        response = await createScenario(scenario);
+        setLatestScenarioNumber(latestScenarioNumber + 1);
+        setScenarioNumber(scenarioNumber + 1);
+      }
+      
       console.log(response.data); // The response of your api
-      setScenarioNumber(scenarioNumber + 1);
       setRecommendations([]);
       setPhotos([]);
       setPhotosToShow([]);
-      setLatestScenarioNumber(latestScenarioNumber + 1);
       setTactic("");
       setDescription("");
       setAttackFlow([]);
@@ -109,11 +149,13 @@ export default function ScenarioCreate() {
       setScenarioDifficulty("");
       setScenarioImpact("");
       setScenarioTitle("");
-
+  
     } catch (error) {
       console.log(error); // handle your error here
     }
   };
+  
+
 
   return (
     <Paper onSubmit={handleSubmit}>
@@ -219,15 +261,27 @@ export default function ScenarioCreate() {
           </Grid>
           <Grid item xs={12}>
             <Grid container spacing={2} justifyContent="center" alignItems="center">
-              {attackFlowToShow.map((photo, index) => (
-                <Grid item key={index}>
-                  <img
-                    src={URL.createObjectURL(photo)}
-                    alt={`uploaded-${index}`}
-                    style={{ maxWidth: "200px", maxHeight: "100px" }}
-                  />
-                </Grid>
-              ))}
+              {(attackFlowToShow && attackFlowToShow.length > 0)
+                ? attackFlowToShow.map((flow, index) => (
+                    <Grid item key={index}>
+                      <img
+                        src={URL.createObjectURL(flow)}
+                        alt={`uploaded-${index}`}
+                        style={{ maxWidth: "200px", maxHeight: "100px" }}
+                      />
+                      <Button onClick={() => handleRemoveAttackFlow(index)}>Remove</Button>
+                    </Grid>
+                  ))
+                : attackFlow && attackFlow.map((flow, index) => (
+                    <Grid item key={index}>
+                      <img
+                        src={flow}
+                        alt={`uploaded-${index}`}
+                        style={{ maxWidth: "200px", maxHeight: "100px" }}
+                      />
+                      <Button onClick={() => handleRemoveAttackFlow(index)}>Remove</Button>
+                    </Grid>
+                  ))}
             </Grid>
           </Grid>
           <Grid item xs={12}>
@@ -249,18 +303,30 @@ export default function ScenarioCreate() {
           </Grid>
           <Grid item xs={12}>
             <Grid container spacing={2} justifyContent="center" alignItems="center">
-              {photosToShow.map((photo, index) => (
-                <Grid item key={index}>
-                  <img
-                    src={URL.createObjectURL(photo)}
-                    alt={`uploaded-${index}`}
-                    style={{ maxWidth: "200px", maxHeight: "100px" }}
-                  />
-                </Grid>
-              ))}
+              {(photosToShow && photosToShow.length > 0)
+                ? photosToShow.map((photo, index) => (
+                    <Grid item key={index}>
+                      <img
+                        src={URL.createObjectURL(photo)}
+                        alt={`uploaded-${index}`}
+                        style={{ maxWidth: "200px", maxHeight: "100px" }}
+                      />
+                      <Button onClick={() => handleRemovePhoto(index)}>Remove</Button>
+                    </Grid>
+                    
+                  ))
+                : photos.map((photo, index) => (
+                    <Grid item key={index}>
+                      <img
+                        src={photo}
+                        alt={`uploaded-${index}`}
+                        style={{ maxWidth: "200px", maxHeight: "100px" }}
+                      />
+                      <Button onClick={() => handleRemovePhoto(index)}>Remove</Button>
+                    </Grid>
+                  ))}
             </Grid>
           </Grid>
-
         <Grid item xs={8}>
             <TextField
             label="Mitigations"
@@ -290,6 +356,9 @@ export default function ScenarioCreate() {
                   {recommendations.map((recommendation, index) => (
                   <li key={index}>
                       <Typography>{recommendation}</Typography>
+                      <Button onClick={() => handleDeleteRecommendation(index)}>
+                        Delete
+                      </Button>
                   </li>
                   ))}
               </ul>
@@ -297,7 +366,7 @@ export default function ScenarioCreate() {
         </Grid>
         <Grid item xs={12}>
         <Button variant="contained" color="primary" onClick={handleSubmit} fullWidth>
-            Add Scenario
+            {scenarioToEdit ? "Update Scenario": "Add Scenario"}
         </Button>
         </Grid>
         {/* Preview of the Scenario */}
@@ -315,26 +384,47 @@ export default function ScenarioCreate() {
               <Typography><b>Description:</b> {description}</Typography>
               <Typography><b>Attack Flow:</b></Typography>
               <Grid container spacing={2} justifyContent="center" alignItems="center">
-              {attackFlowToShow.map((flow, index) => (
-                <img
-                  key={index}
-                  src={URL.createObjectURL(flow)}
-                  alt={`Attack Flow ${index}`}
-                  style={{ maxWidth: "200px", maxHeight: "100px" }}
-                />
-              ))}
+                {(attackFlowToShow && attackFlowToShow.length > 0)
+                  ? attackFlowToShow.map((flow, index) => (
+                      <Grid item key={index}>
+                        <img
+                          src={URL.createObjectURL(flow)}
+                          alt={`uploaded-${index}`}
+                          style={{ maxWidth: "200px", maxHeight: "100px" }}
+                        />
+                      </Grid>
+                    ))
+                  : attackFlow && attackFlow.map((flow, index) => (
+                      <Grid item key={index}>
+                        <img
+                          src={flow}
+                          alt={`uploaded-${index}`}
+                          style={{ maxWidth: "200px", maxHeight: "100px" }}
+                        />
+                      </Grid>
+                    ))}
               </Grid>
               <Typography sx={{ marginTop: '16px'}}><b>Proof of Concept:</b></Typography>
               <Grid container spacing={2} justifyContent="center" alignItems="center">
-                {photosToShow.map((photo, index) => (
-                  <Grid item key={index}>
-                    <img
-                      src={URL.createObjectURL(photo)}
-                      alt={`uploaded-${index}`}
-                      style={{ maxWidth: "200px", maxHeight: "100px" }}
-                    />
-                  </Grid>
-                ))}
+                {(photosToShow && photosToShow.length > 0)
+                  ? photosToShow.map((photo, index) => (
+                      <Grid item key={index}>
+                        <img
+                          src={URL.createObjectURL(photo)}
+                          alt={`uploaded-${index}`}
+                          style={{ maxWidth: "200px", maxHeight: "100px" }}
+                        />
+                      </Grid>
+                    ))
+                  : photos.map((photo, index) => (
+                      <Grid item key={index}>
+                        <img
+                          src={photo}
+                          alt={`uploaded-${index}`}
+                          style={{ maxWidth: "200px", maxHeight: "100px" }}
+                        />
+                      </Grid>
+                    ))}
               </Grid>
               <Typography sx={{ marginTop: '16px'}}><b>Mitigations:</b></Typography>
               <ul>

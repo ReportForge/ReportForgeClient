@@ -5,6 +5,7 @@ import HebrewReport from './components/HebrewReport/HebrewReport';
 import EnglishMenu from './components/EnglishMenu/EnglishMenu';
 import ScenarioCreate from './components/ScenarioCreatePage/ScenarioCreatePage'
 import EnglishScenarioList from './components/EnglishScenarioList/EnglishScenarioList';
+import ScenarioCreatePage from './components/ScenarioCreatePage/ScenarioCreatePage'
 
 function AppRouter() {
   return (
@@ -16,6 +17,8 @@ function AppRouter() {
             <Route path="/englishReport" element={<EnglishReport/>} />
             <Route path="/scenarioCreate" element={<ScenarioCreate/>} />
             <Route path="/englishScenarioList" element={<EnglishScenarioList/>} />
+            <Route path="/edit/:scenarioNumber" element={<ScenarioCreatePage />} />
+            <Route path="/englishScenarioList/:scenarioId" element={<EnglishScenarioList/>} />
         </Routes>
     </BrowserRouter>
   );

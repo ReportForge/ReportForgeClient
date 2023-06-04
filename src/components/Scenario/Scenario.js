@@ -1,6 +1,9 @@
-import React from "react";
-import { Paper, Typography, Grid } from "@mui/material";
+import React, {useState} from "react";
+import { Paper, Typography, Button } from "@mui/material";
 import { styled } from "@mui/system";
+import { useNavigate } from 'react-router-dom';
+import { useApi } from '../../api';
+import { Alert } from '@mui/lab';
 
 const ScenarioWrapper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(2),
@@ -8,9 +11,48 @@ const ScenarioWrapper = styled(Paper)(({ theme }) => ({
 }));
 
 export default function Scenario({ scenario }) {
+
+  const navigate = useNavigate();
+  const { approveScenario, disapproveScenario } = useApi(); 
+  const [isApproved, setIsApproved] = useState(scenario.status);
+  const navigateToEdit = (scenario) => {
+    navigate(`/edit/${scenario.scenarioNumber}`, { state: scenario });
+  };
+
+  const handleApprove = async (id) => {
+    try {
+      const respone = await approveScenario(id);
+      setIsApproved(respone.data.status);
+      alert('Scenario approved successfully');
+    } catch (error) {
+      alert('Error approving scenario');
+      console.log(error);
+    }
+  };
+
+  const handleDisapprove = async (id) => {
+    try {
+      const respone = await disapproveScenario(id);
+      setIsApproved(respone.data.status);
+      alert('Scenario disapproved successfully');
+    } catch (error) {
+      console.error('Failed to disapprove scenario:', error);
+    }
+  }
+
   return (
-    <ScenarioWrapper sx={{ margin: '16px' }}>
-      <Typography sx={{ marginBottom: '16px' }} variant="h6">Scenario {scenario.scenarioNumber}: {scenario.scenarioTitle}</Typography>
+    <ScenarioWrapper sx={{ margin: '16px'}}>
+      {
+        isApproved === "Approved" ? (
+          <Alert severity="success">Approval status: Approved</Alert>
+        ) : isApproved === "Disapproved" ? (
+          <Alert severity="warning">Approval status: Disapproved</Alert>
+        ) : (
+          <Alert severity="info">Approval status: Pending</Alert>
+        )
+      }
+
+      <Typography sx={{ marginBottom: '16px', marginTop: '16px' }} variant="h6">Scenario {scenario.scenarioNumber}: {scenario.scenarioTitle}</Typography>
       <Typography>Difficulty: {scenario.scenarioDifficulty}</Typography>
       <Typography sx={{ marginBottom: '16px' }}> Level of Impact: {scenario.scenarioImpact}</Typography>
       <Typography variant="subtitle1">Tactic – Code Execution and Persistence:</Typography>
@@ -65,6 +107,42 @@ export default function Scenario({ scenario }) {
           </li>
         ))}
       </ul>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={() => navigateToEdit(scenario)}
+      >
+        Edit
+      </Button>
+      {isApproved === "Approved" ? (
+        <Button
+          variant="contained"
+          sx={{ 
+            marginLeft: '16px',  // or any other value that suits your needs
+            backgroundColor: 'red', // Material-UI does not have a "pink" color in its default theme
+            '&:hover': {
+              backgroundColor: '#FFB6C1', // Change this to desired hover color
+            },
+          }}
+          onClick={() => handleDisapprove(scenario._id)}
+        >
+          Disapprove
+        </Button>
+      ) : (
+        <Button
+          variant="contained"
+          sx={{ 
+            marginLeft: '16px',  // or any other value that suits your needs
+            backgroundColor: '#ff006e', // Material-UI does not have a "pink" color in its default theme
+            '&:hover': {
+              backgroundColor: '#FFB6C1', // Change this to desired hover color
+            },
+          }}
+          onClick={() => handleApprove(scenario._id)}
+        >
+          Approve
+        </Button>
+      )}
     </ScenarioWrapper>
   );
 }

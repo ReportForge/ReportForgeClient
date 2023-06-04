@@ -1,36 +1,47 @@
 import React, { useEffect, useState } from "react";
-import { Typography } from "@mui/material";
+import { Typography, CircularProgress, Box  } from "@mui/material";
 import { useApi } from "../../api"; // Assuming your api.js is in the same directory level
 import Scenario from "../Scenario/Scenario";
 
 export default function ScenarioList() {
   const { getScenarios } = useApi();
   const [scenarios, setScenarios] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    const fetchScenarios = async () => {
+      try {
+        const response = await getScenarios();
+        setScenarios(response.data);
+        setIsLoading(false);
+      } catch (error) {
+        console.log(error);
+        setIsLoading(false);
+      }
+    };
     fetchScenarios();
-  });
+  },[]);
 
-  const fetchScenarios = async () => {
-    try {
-      const response = await getScenarios();
-      setScenarios(response.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  
+  
 
   return (
     <div>
       <Typography variant="h5" sx={{ margin: '16px' }}>
         Scenarios
       </Typography>
-      {scenarios && scenarios.length > 0 ? (
-        scenarios.map((scenario, index) => (
-          <Scenario key={index} scenario={scenario} />
-        ))
+      {isLoading ? (
+        <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "80vh" }}>
+          <CircularProgress /> 
+        </Box>
       ) : (
-        <Typography variant="body1">No scenarios found.</Typography>
+        scenarios && scenarios.length > 0 ? (
+          scenarios.map((scenario, index) => (
+            <Scenario key={index} scenario={scenario} />
+          ))
+        ) : (
+          <Typography variant="body1">No scenarios found.</Typography>
+        )
       )}
     </div>
   );

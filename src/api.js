@@ -24,5 +24,21 @@ export function useApi() {
     return await axios.get(`${baseURL}/scenarios/latest-number`);
   };
 
-  return { createScenario, getScenarios, updateScenario, deleteScenario, getLatestScenarioNumber };
+  const approveScenario = async (id) => {
+    return await axios.put(`${baseURL}/scenarios/approve/${id}`);
+  };
+
+  const disapproveScenario = async (id) => {
+    return await axios.put(`${baseURL}/scenarios/disapprove/${id}`);
+  };
+
+  return { 
+    createScenario,
+    getScenarios,
+    updateScenario,
+    deleteScenario,
+    getLatestScenarioNumber,
+    approveScenario,
+    disapproveScenario 
+  };
 }
