@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    backgroundImage: `url(${WhiteHatLogo})`,
+    
     backgroundSize: 'cover',
     height: '100vh',
     display: 'flex',

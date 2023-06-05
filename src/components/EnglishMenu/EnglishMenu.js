@@ -1,24 +1,39 @@
 import React from 'react';
-import { Button, Box } from '@material-ui/core';
+import { Grid, Card, CardContent, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { Link } from 'react-router-dom';
-import WhiteHatLogo from '../../images/ReportForgeBackground.png';
+import createReport from '../../images/createReport.png'
+import Approve from '../../images/approve.png'
+import Scenario from '../../images/scenario.png'
 
-// Define styles
+
 const useStyles = makeStyles((theme) => ({
-  button: {
-    margin: theme.spacing(1),
-  },
   container: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
     height: '100vh',
-    backgroundImage: `url(${WhiteHatLogo})`,
-    backgroundSize: 'cover',
-    backgroundRepeat: 'no-repeat',
-    backgroundPosition: 'center',
+  },
+  card: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: theme.spacing(1),
+    width: '300px',
+    height: '400px',
+    boxShadow: '0 3px 6px rgba(0,0,0,0.30), 0 3px 6px rgba(0,0,0,0.30)',
+    borderRadius: '10px',
+    transition: "0.3s",
+    "&:hover": {
+      transform: "scale(1.05)",
+      boxShadow: '0 5px 15px rgba(0,0,0,0.50), 0 5px 15px rgba(0,0,0,0.50)',
+    },
+  },
+  media: {
+    height: 200, 
+    width: 200,
   },
 }));
 
@@ -27,23 +42,56 @@ const EnglishMenu = () => {
 
   return (
     <div className={classes.container}>
-      <Box>
-        <Link to="/englishReport">
-            <Button variant="contained" color="primary" className={classes.button}>
-            Create a Report
-            </Button>
-        </Link>
-        <Link to="/scenarioCreate">
-            <Button variant="contained" color="primary" className={classes.button}>
-            Create Scenario
-            </Button>
-        </Link>
-        <Link to="/englishScenarioList">
-          <Button variant="contained" color="primary" className={classes.button}>
-            Approve and Edit Scenario
-          </Button>
-        </Link>
-      </Box>
+      <Grid container direction="row" alignItems="center" justifyContent="center">
+        <Grid item>
+          <Link to="/englishReport" style={{ textDecoration: 'none' }}>
+            <Card className={classes.card}>
+              <img
+                className={classes.media}
+                src={createReport}
+                alt="Report"
+              />
+              <CardContent>
+                    <Typography variant="h4" style={{ color: '#1d3557', fontWeight: 'bold'}}>
+                      Create a Report
+                    </Typography>
+              </CardContent>
+            </Card>
+          </Link>
+        </Grid>
+        <Grid item>
+          <Link to="/scenarioCreate" style={{ textDecoration: 'none' }}>
+            <Card className={classes.card}>
+              <img
+                className={classes.media}
+                src={Scenario}
+                alt="Report"
+              />
+              <CardContent>
+                  <Typography variant="h4" style={{ color: '#1d3557', fontWeight: 'bold'}}>
+                    Create Scenario
+                    </Typography>
+              </CardContent>
+            </Card>
+          </Link>
+        </Grid>
+        <Grid item>
+          <Link to="/englishScenarioList" style={{ textDecoration: 'none' }}>
+            <Card className={classes.card}>
+              <img
+                className={classes.media}
+                src={Approve}
+                alt="Report"
+              />
+              <CardContent>
+                  <Typography variant="h5" style={{ color: '#1d3557', fontWeight: 'bold'}}>
+                    Approve and Edit Scenarios
+                  </Typography>
+              </CardContent>
+            </Card>
+          </Link>
+        </Grid>
+      </Grid>
     </div>
   );
 }

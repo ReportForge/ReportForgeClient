@@ -1,5 +1,6 @@
 // api.js
 import axios from 'axios';
+import { useCallback} from 'react';
 
 const baseURL = 'http://localhost:5000'; // replace this with your actual server URL
 
@@ -8,9 +9,9 @@ export function useApi() {
     return await axios.post(`${baseURL}/scenarios`, scenario);
   };
 
-  const getScenarios = async () => {
+  const getScenarios = useCallback(async () => {
     return await axios.get(`${baseURL}/scenarios`);
-  };
+}, []); // Dependency array
 
   const updateScenario = async (id, scenario) => {
     return await axios.put(`${baseURL}/scenarios/${id}`, scenario);

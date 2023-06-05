@@ -8,7 +8,6 @@ import Docxtemplater from 'docxtemplater';
 import { saveAs } from 'file-saver';
 import PizZip from 'pizzip';
 import ImageModule from 'docxtemplater-image-module-free';
-import ScenarioForm from "../../components/ScenarioForm/ScenarioForm";
 import { useApi } from "../../api";
 import Scenario from "../Scenario/Scenario";
 
@@ -45,10 +44,8 @@ function OpeningPageForm() {
   const [selectedScenarios, setSelectedScenarios] = useState([]);
   const [imageData, setImageData] = useState('');
   const [formData, setFormData] = useState({companyName: '',documentName: '', imageTag: '',date: ''});
-  const [scenariosData, setSceneriosData] = useState('');
   const [scenarios, setScenarios] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [counters, setCounters] = useState(0);
 
   useEffect(() => {
     const fetchScenarios = async () => {
@@ -63,7 +60,7 @@ function OpeningPageForm() {
       }
     };
     fetchScenarios();
-  }, []);
+  },[getScenarios]);
   
 
   const handleScenarioSelectionChange = (scenario, isChecked) => {
@@ -96,6 +93,7 @@ function OpeningPageForm() {
   // };
 
   async function generateDocx(formData, scenarios) {
+    var counter = 0;
     const templateResponse = await fetch(testFile);
     const templateArrayBuffer = await templateResponse.arrayBuffer();
     const zip = new PizZip(templateArrayBuffer);
@@ -124,6 +122,7 @@ function OpeningPageForm() {
       ...formData,
       scenarios: (scenarios).map((scenario, index) => ({
         ...scenario,
+        scenarioNumber: ++counter,
         recommendations: scenario.recommendations,
         photos: scenario.photos.map((photo) => ({imageTag: photo})),
         attackFlow: scenario.attackFlow.map((attackFlow) => ({imageTag: attackFlow})),
@@ -232,7 +231,7 @@ function OpeningPageForm() {
                           color="primary"
                         />
                       }
-                      label="Select this scenario"
+                      label={"Select this scenario ("+ scenario.scenarioTitle + ")"}
                     />
                   </div>
                 ))
