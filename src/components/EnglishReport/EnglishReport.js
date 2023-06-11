@@ -17,9 +17,11 @@ function EnglishReport() {
 
   return (
     <Paper className={classes.root}>
-      <Typography variant="h4" className={classes.title}>
-        English Report
-      </Typography>
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <Typography variant="h4" className={classes.title} style={{color: "#Oe1625"}}>
+          English Report
+        </Typography>
+      </div>
         <OpeningPageForm/>
     </Paper>
   );

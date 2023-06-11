@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Typography, CircularProgress, Box  } from "@mui/material";
-import { useApi } from "../../api"; // Assuming your api.js is in the same directory level
+import { Typography, CircularProgress, Box, TextField, Paper } from "@mui/material";
+import { useApi } from "../../api";
 import Scenario from "../Scenario/Scenario";
 
 export default function ScenarioList() {
   const { getScenarios } = useApi();
   const [scenarios, setScenarios] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -20,24 +21,39 @@ export default function ScenarioList() {
       }
     };
     fetchScenarios();
-  },[]);
+  }, [getScenarios]);
 
-  
-  
+  const handleSearch = event => {
+    setSearchTerm(event.target.value);
+  }
+
+  const filteredScenarios = scenarios.filter(scenario =>
+    scenario.scenarioTitle.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div>
       <Typography variant="h5" sx={{ margin: '16px' }}>
         Scenarios
       </Typography>
+      <Box sx={{ display: "flex", justifyContent: "center", marginBottom: '16px' }}>
+        <Paper elevation={3}>
+          <TextField
+            label="Search"
+            variant="outlined"
+            value={searchTerm}
+            onChange={handleSearch}
+          />
+        </Paper>
+      </Box>
       {isLoading ? (
         <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "80vh" }}>
           <CircularProgress /> 
         </Box>
       ) : (
-        scenarios && scenarios.length > 0 ? (
-          scenarios.map((scenario, index) => (
-            <Scenario key={index} scenario={scenario} />
+        filteredScenarios && filteredScenarios.length > 0 ? (
+          filteredScenarios.map((scenario, index) => (
+            <Scenario key={index} scenario={scenario}/>
           ))
         ) : (
           <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "80vh" }}>

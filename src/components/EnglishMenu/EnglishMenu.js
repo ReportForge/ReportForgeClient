@@ -6,7 +6,6 @@ import createReport from '../../images/createReport.png'
 import Approve from '../../images/approve.png'
 import Scenario from '../../images/scenario.png'
 
-
 const useStyles = makeStyles((theme) => ({
   container: {
     display: 'flex',
@@ -35,6 +34,7 @@ const useStyles = makeStyles((theme) => ({
     height: 200, 
     width: 200,
   },
+  
 }));
 
 const EnglishMenu = () => {

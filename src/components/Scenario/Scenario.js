@@ -4,10 +4,30 @@ import { styled } from "@mui/system";
 import { useNavigate } from 'react-router-dom';
 import { useApi } from '../../api';
 import { Alert } from '@mui/lab';
+import { GlobalStyles } from '@mui/system';
+
+const ColorChangeAnimation = () => {
+  return (
+    <GlobalStyles styles={{
+      "@keyframes color-change": {
+        "0%": {
+          boxShadow: "0 3px 6px 2px #45edf2, 0 3px 6px 2px#45edf2",
+        },
+        "50%": {
+          boxShadow: "0 3px 6px 2px #49299a, 0 3px 6px 2px #49299a",
+        },
+        "100%": {
+          boxShadow: "0 3px 6px 2px #45edf2, 0 3px 6px 2px #45edf2",
+        }
+      }
+    }} />
+  )
+};
 
 const ScenarioWrapper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(2),
   marginBottom: theme.spacing(2),
+  animation: 'color-change 4s infinite',
 }));
 
 export default function Scenario({ scenario }) {
@@ -15,9 +35,12 @@ export default function Scenario({ scenario }) {
   const navigate = useNavigate();
   const { approveScenario, disapproveScenario } = useApi(); 
   const [isApproved, setIsApproved] = useState(scenario.status);
+
   const navigateToEdit = (scenario) => {
     navigate(`/edit/${scenario.scenarioNumber}`, { state: scenario });
   };
+
+  
 
   const handleApprove = async (id) => {
     try {
@@ -41,7 +64,9 @@ export default function Scenario({ scenario }) {
   }
 
   return (
-    <ScenarioWrapper sx={{ margin: '16px'}}>
+    <>
+    <ColorChangeAnimation />
+    <ScenarioWrapper sx={{ margin: '16px', marginBottom: 5}}>
       {
         isApproved === "Approved" ? (
           <Alert severity="success">Approval status: Approved</Alert>
@@ -144,5 +169,6 @@ export default function Scenario({ scenario }) {
         </Button>
       )}
     </ScenarioWrapper>
+    </>
   );
 }
