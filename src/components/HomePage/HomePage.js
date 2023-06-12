@@ -58,7 +58,7 @@ function HomePage() {
           </Link>
         </Grid>
         <Grid item>
-          <Link to="/hebrew" style={{ textDecoration: 'none' }}>
+          <Link to="/hebrewMenu" style={{ textDecoration: 'none' }}>
             <Card className={classes.card}>
               <img
                 className={classes.media}
