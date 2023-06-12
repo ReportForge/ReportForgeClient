@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useApi } from '../../api';
 import { Alert } from '@mui/lab';
 import { GlobalStyles } from '@mui/system';
+import { useTheme } from '@mui/material/styles';
 
 const ColorChangeAnimation = () => {
   return (
@@ -35,6 +36,7 @@ export default function Scenario({ scenario }) {
   const navigate = useNavigate();
   const { approveScenario, disapproveScenario } = useApi(); 
   const [isApproved, setIsApproved] = useState(scenario.status);
+  const theme = useTheme();
 
   const navigateToEdit = (scenario) => {
     navigate(`/edit/${scenario.scenarioNumber}`, { state: scenario });
@@ -134,7 +136,7 @@ export default function Scenario({ scenario }) {
       </ul>
       <Button
         variant="contained"
-        color="primary"
+        style={{backgroundColor: theme.palette.mode === 'dark' ? '#45edf2' : '#49299a'}}
         onClick={() => navigateToEdit(scenario)}
       >
         Edit
@@ -144,9 +146,9 @@ export default function Scenario({ scenario }) {
           variant="contained"
           sx={{ 
             marginLeft: '16px',  // or any other value that suits your needs
-            backgroundColor: 'red', // Material-UI does not have a "pink" color in its default theme
+            backgroundColor: '#d90429', // Material-UI does not have a "pink" color in its default theme
             '&:hover': {
-              backgroundColor: '#FFB6C1', // Change this to desired hover color
+              backgroundColor: '#ef233c', // Change this to desired hover color
             },
           }}
           onClick={() => handleDisapprove(scenario._id)}
@@ -158,9 +160,9 @@ export default function Scenario({ scenario }) {
           variant="contained"
           sx={{ 
             marginLeft: '16px',  // or any other value that suits your needs
-            backgroundColor: '#ff006e', // Material-UI does not have a "pink" color in its default theme
+            backgroundColor: '#039487', // Material-UI does not have a "pink" color in its default theme
             '&:hover': {
-              backgroundColor: '#FFB6C1', // Change this to desired hover color
+              backgroundColor: '#04dfcc', // Change this to desired hover color
             },
           }}
           onClick={() => handleApprove(scenario._id)}

@@ -3,6 +3,7 @@ import { TextField, MenuItem, Button, Grid, Typography, Paper } from "@mui/mater
 import { useApi } from "../../api"; // Assuming your api.js is in the same directory level
 import { useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import { useTheme } from '@mui/material/styles';
 
 const difficulties = ["Low", "Medium", "High"];
 const impacts = ["Low", "Medium", "High"];
@@ -26,6 +27,7 @@ export default function ScenarioCreate() {
   const [attackFlow, setAttackFlow] = useState(scenarioToEdit ? scenarioToEdit.attackFlow : '');
   const [attackFlowToShow, setAttackFlowToShow] = useState([]);
   const navigate = useNavigate();
+  const theme = useTheme();
 
   
 
@@ -159,7 +161,7 @@ export default function ScenarioCreate() {
 
   return (
     <Paper onSubmit={handleSubmit}>
-    <Typography component="h1" variant="h5" align="center" sx={{ marginTop: '16px', marginBottom: '16px' }}>
+    <Typography component="h1" variant="h5" align="center" sx={{ marginTop: '50px', marginBottom: '50px' , fontWeight: 'bold'}}>
         Scenarios Creation
     </Typography>
     <Grid container spacing={3} justifyContent="center" alignItems="center">
@@ -167,7 +169,7 @@ export default function ScenarioCreate() {
           <Grid container spacing={3} justifyContent="center" alignItems="center">
             <Grid item xs={3}>
               <TextField
-                  label="Scenario Number"
+                  label={<span style={{ color: theme.palette.mode === 'dark' ? '#45edf2' : '#49299a', fontWeight: 'bold' }}>Scenario Number</span>}
                   value={scenarioNumber}
                   disabled
                   fullWidth
@@ -175,7 +177,7 @@ export default function ScenarioCreate() {
             </Grid>
             <Grid item xs={5}>
               <TextField
-                  label="Scenario Title"
+                  label={<span style={{ color: theme.palette.mode === 'dark' ? '#45edf2' : '#49299a', fontWeight: 'bold' }}>Scenario Title</span>}
                   value={scenarioTitle}
                   onChange={(e) => setScenarioTitle(e.target.value)}
                   required
@@ -189,7 +191,7 @@ export default function ScenarioCreate() {
             <Grid item xs={4}>
               <TextField
                   select
-                  label="Scenario Difficulty"
+                  label={<span style={{ color: theme.palette.mode === 'dark' ? '#45edf2' : '#49299a', fontWeight: 'bold' }}>Scenario Difficulty</span>}
                   value={scenarioDifficulty}
                   onChange={(e) => setScenarioDifficulty(e.target.value)}
                   required
@@ -205,7 +207,7 @@ export default function ScenarioCreate() {
             <Grid item xs={4}>
               <TextField
                   select
-                  label="Scenario Level of Impact"
+                  label={<span style={{ color: theme.palette.mode === 'dark' ? '#45edf2' : '#49299a', fontWeight: 'bold' }}>Scenario Level of Impact</span>}
                   value={scenarioImpact}
                   onChange={(e) => setScenarioImpact(e.target.value)}
                   required
@@ -222,7 +224,7 @@ export default function ScenarioCreate() {
         </Grid>
         <Grid item xs={8}>
             <TextField
-              label="Tactic – Code Execution and Persistence"
+              label={<span style={{ color: theme.palette.mode === 'dark' ? '#45edf2' : '#49299a', fontWeight: 'bold' }}>Tactic – Code Execution and Persistence</span>}
               value={tactic}
               onChange={(e) => setTactic(e.target.value)}
               required
@@ -233,7 +235,7 @@ export default function ScenarioCreate() {
           </Grid>
           <Grid item xs={8}>
             <TextField
-              label="Description of the Attack"
+              label={<span style={{ color: theme.palette.mode === 'dark' ? '#45edf2' : '#49299a', fontWeight: 'bold' }}>Description of the Attack</span>}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               required
@@ -249,11 +251,11 @@ export default function ScenarioCreate() {
                 type="file"
                 multiple
                 onChange={handleAttackFlowUpload}
-                style={{ display: "none" }}
+                style={{ display: "none"}}
                 id="upload-attack-flow"
               />
               <label htmlFor="upload-attack-flow">
-                <Button variant="outlined" color="primary" component="span">
+                <Button variant="outlined" component="span">
                   Upload Attack Flow
                 </Button>
               </label>
@@ -295,7 +297,7 @@ export default function ScenarioCreate() {
                 id="upload-photo"
               />
               <label htmlFor="upload-photo">
-                <Button variant="outlined" color="primary" component="span">
+                <Button variant="outlined" component="span">
                   Upload Proof of Concept Photos
                 </Button>
               </label>
@@ -329,7 +331,7 @@ export default function ScenarioCreate() {
           </Grid>
         <Grid item xs={8}>
             <TextField
-            label="Mitigations"
+            label={<span style={{ color: theme.palette.mode === 'dark' ? '#45edf2' : '#49299a', fontWeight: 'bold' }}>Mitigations</span>}
             value={recommendation}
             onChange={(e) => setRecommendation(e.target.value)}
             fullWidth
@@ -342,7 +344,7 @@ export default function ScenarioCreate() {
             <Grid item >
                 <Button
                     variant="contained"
-                    color="secondary"
+                    style={{backgroundColor: theme.palette.mode === 'dark' ? '#45edf2' : '#49299a'}}
                     onClick={handleAddRecommendation}
                     >
                     Add Mitigations
@@ -351,7 +353,6 @@ export default function ScenarioCreate() {
         </Grid>
         <Grid item xs={12}>
           <Grid container alignItems="center" justifyContent="center" style={{ marginTop:"10px" }}>
-
               <ul>
                   {recommendations.map((recommendation, index) => (
                   <li key={index}>
@@ -365,7 +366,7 @@ export default function ScenarioCreate() {
           </Grid>
         </Grid>
         <Grid item xs={12}>
-        <Button variant="contained" color="primary" onClick={handleSubmit} fullWidth>
+        <Button variant="contained" style={{backgroundColor: theme.palette.mode === 'dark' ? '#45edf2' : '#49299a', fontWeight: 'bold'}} onClick={handleSubmit} fullWidth>
             {scenarioToEdit ? "Update Scenario": "Add Scenario"}
         </Button>
         </Grid>
