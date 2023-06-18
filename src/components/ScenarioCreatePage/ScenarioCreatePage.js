@@ -4,6 +4,8 @@ import { useApi } from "../../api"; // Assuming your api.js is in the same direc
 import { useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
+import Back from '../../images/back-button.png'
+import { Link } from 'react-router-dom';
 
 const difficulties = ["Low", "Medium", "High"];
 const impacts = ["Low", "Medium", "High"];
@@ -160,6 +162,14 @@ export default function ScenarioCreate() {
 
 
   return (
+    <>
+    <Link to="/english" style={{ textDecoration: 'none',position: 'absolute', top: '0', left: '0', marginTop: '100px', marginLeft: '20px'}}>
+          <img
+            style={{width: "50px", height: "50px"}}
+            src={Back}
+            alt="Report"
+          />
+      </Link>
     <Paper onSubmit={handleSubmit}>
     <Typography component="h1" variant="h5" align="center" sx={{ marginTop: '50px', marginBottom: '50px' , fontWeight: 'bold'}}>
         Scenarios Creation
@@ -438,6 +448,7 @@ export default function ScenarioCreate() {
         </Grid>
     </Grid>
     </Paper>
+    </>
 );
 
 }

@@ -11,6 +11,8 @@ import ImageModule from 'docxtemplater-image-module-free';
 import { useApi } from "../../api";
 import { useTheme } from '@mui/material/styles';
 import HebrewScenario from '../Scenario/HebrewScenario';
+import Back from '../../images/back-button.png'
+import { Link } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
   formContainer: {
@@ -122,6 +124,8 @@ function HebrewReport() {
         }
       },
     };
+
+    console.log(scenarios);
   
     const doc = new Docxtemplater()
       .attachModule(new ImageModule(imageModuleOptions))
@@ -139,7 +143,7 @@ function HebrewReport() {
       })),
     });
     doc.render();
-  
+    console.log(doc);
     const output = doc.getZip().generate({ type: 'blob' });
     saveAs(output, 'output.docx');
   }
@@ -156,6 +160,13 @@ function HebrewReport() {
   return (
     
     <Container component="main" maxWidth="md">
+      <Link to="/hebrewMenu" style={{ textDecoration: 'none',position: 'absolute', top: '0', left: '0', marginTop: '100px', marginLeft: '20px'}}>
+        <img
+          style={{width: "50px", height: "50px"}}
+          src={Back}
+          alt="Report"
+        />
+      </Link>
       <div className={classes.formContainer}>
         <img src={logo} alt="Company Logo" className={classes.logo} />
         <Typography component="h1" variant="h5" style={{color: "#Oe1625"}}>

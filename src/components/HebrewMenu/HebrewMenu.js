@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import createReport from '../../images/hebrewReportCreate.png'
 import Approve from '../../images/hebrewApprove.png'
 import Scenario from '../../images/createHebrewSceanrio.png'
+import Back from '../../images/back-button.png'
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -42,6 +43,13 @@ const HebrewMenu = () => {
 
   return (
     <div className={classes.container}>
+      <Link to="/" style={{ textDecoration: 'none',position: 'absolute', top: '0', left: '0', marginTop: '100px', marginLeft: '20px'}}>
+        <img
+          style={{width: "50px", height: "50px"}}
+          src={Back}
+          alt="Report"
+        />
+      </Link>
       <Grid container direction="row" alignItems="center" justifyContent="center">
         <Grid item>
           <Link to="/hebrewReport" style={{ textDecoration: 'none' }}>

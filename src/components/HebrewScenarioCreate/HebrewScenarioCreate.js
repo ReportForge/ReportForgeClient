@@ -4,34 +4,81 @@ import { useApi } from "../../api";
 import { useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
+import Back from '../../images/back-button.png'
+import { Link } from 'react-router-dom';
 
-const difficulties = ["נמוכה", "בינונית", "גבוהה"];
-const impacts = ["נמוכה", "בינונית", "גבוהה"];
+const difficulties = ["קלה", "בינונית", "גבוהה"];
+const impacts = ["קלה", "בינונית", "גבוהה"];
 
 export default function HebrewScenarioCreate() {
 
-    const location = useLocation();
-    const scenarioToEdit = location.state;
-    const { createHebrewScenario, getLatestHebrewScenarioNumber, updateHebrewScenario } = useApi();
-    const [scenarioNumber, setScenarioNumber] = useState(scenarioToEdit ? scenarioToEdit.scenarioNumber : 0);
-    const [scenarioTitle, setScenarioTitle] = useState(scenarioToEdit ? scenarioToEdit.scenarioTitle : '');
-    const [scenarioDifficulty, setScenarioDifficulty] = useState(scenarioToEdit ? scenarioToEdit.scenarioDifficulty : '');
-    const [scenarioImpact, setScenarioImpact] = useState(scenarioToEdit ? scenarioToEdit.scenarioImpact : '');
-    const [photos, setPhotos] = useState(scenarioToEdit ? scenarioToEdit.photos : []);
-    const [photosToShow, setPhotosToShow] = useState([]);
-    const [latestScenarioNumber, setLatestScenarioNumber] = useState(0);
-    const [tactic, setTactic] = useState(scenarioToEdit ? scenarioToEdit.tactic : '');
-    const [description, setDescription] = useState(scenarioToEdit ? scenarioToEdit.description : '');
-    const [attackFlow, setAttackFlow] = useState(scenarioToEdit ? scenarioToEdit.attackFlow : '');
-    const [attackFlowToShow, setAttackFlowToShow] = useState([]);
-    const [recommendation, setRecommendation] = useState(scenarioToEdit ? scenarioToEdit.recommendation : '');
-    const [recommendations, setRecommendations] = useState(scenarioToEdit ? scenarioToEdit.recommendations : []);
+      const location = useLocation();
+      const scenarioToEdit = location.state;
+      const { createHebrewScenario, getLatestHebrewScenarioNumber, updateHebrewScenario } = useApi();
+      const [scenarioNumber, setScenarioNumber] = useState(scenarioToEdit ? scenarioToEdit.scenarioNumber : 0);
+      const [scenarioTitle, setScenarioTitle] = useState(scenarioToEdit ? scenarioToEdit.scenarioTitle : '');
+      const [scenarioDifficulty, setScenarioDifficulty] = useState(scenarioToEdit ? scenarioToEdit.scenarioDifficulty : '');
+      const [scenarioImpact, setScenarioImpact] = useState(scenarioToEdit ? scenarioToEdit.scenarioImpact : '');
+      const [photos, setPhotos] = useState(scenarioToEdit ? scenarioToEdit.photos : []);
+      const [photosToShow, setPhotosToShow] = useState([]);
+      const [latestScenarioNumber, setLatestScenarioNumber] = useState(0);
+      const [tactic, setTactic] = useState(scenarioToEdit ? scenarioToEdit.tactic : '');
+      const [description, setDescription] = useState(scenarioToEdit ? scenarioToEdit.description : '');
+      const [attackFlow, setAttackFlow] = useState(scenarioToEdit ? scenarioToEdit.attackFlow : '');
+      const [attackFlowToShow, setAttackFlowToShow] = useState([]);
+      const [recommendation, setRecommendation] = useState(scenarioToEdit ? scenarioToEdit.recommendation : '');
+      const [recommendations, setRecommendations] = useState(scenarioToEdit ? scenarioToEdit.recommendations : []);
 
-    const navigate = useNavigate();
-    const theme = useTheme();
+      const navigate = useNavigate();
+      const theme = useTheme();
+
+    
+      const formattedDescription = description
+      .split(" ")
+      .map((word) => {
+        const hasEnglishChars = /[A-Za-z]/.test(word);
+        if (hasEnglishChars) {
+          // If the word is English, embed it as left-to-right text
+          return "\u202B" + word + "\u202C";
+        } else {
+          // If the word is not English, embed it as right-to-left text
+          return "\u202B" + word + "\u202C";
+        }
+      })
+      .join(" ");
+
+      const formattedTactic = tactic
+      .split(" ")
+      .map((word) => {
+        const hasEnglishChars = /[A-Za-z]/.test(word);
+        if (hasEnglishChars) {
+          // If the word is English, embed it as left-to-right text
+          return "\u202B" + word + "\u202C";
+        } else {
+          // If the word is not English, embed it as right-to-left text
+          return "\u202B" + word + "\u202C";
+        }
+      })
+      .join(" ");
+
+
+    const formattedRecommendations = recommendations.map((rec) => 
+      rec.split(" ")
+        .map((word) => {
+          const hasEnglishChars = /[A-Za-z]/.test(word);
+          if (hasEnglishChars) {
+            // If the word is English, embed it as left-to-right text
+            return "\u202A" + word + "\u202C";
+          } else {
+            // If the word is not English, embed it as right-to-left text
+            return "\u202B" + word + "\u202C";
+          }
+        })
+        .join(" ")
+    );
 
     useEffect(() => {
-        fetchLatestScenarioNumber();
+      fetchLatestScenarioNumber();
     });
 
     const fetchLatestScenarioNumber = async () => {
@@ -121,8 +168,8 @@ export default function HebrewScenarioCreate() {
         scenarioImpact: scenarioImpact,
         recommendations: recommendations,
         photos: photos,
-        tactic: tactic,
-        description: description,
+        tactic: formattedTactic,
+        description: formattedDescription,
         attackFlow: attackFlow,
         };
     
@@ -157,6 +204,14 @@ export default function HebrewScenarioCreate() {
 
 
   return (
+    <>
+    <Link to="/hebrewMenu" style={{ textDecoration: 'none',position: 'absolute', top: '0', left: '0', marginTop: '100px', marginLeft: '20px'}}>
+        <img
+          style={{width: "50px", height: "50px"}}
+          src={Back}
+          alt="Report"
+        />
+    </Link>
     <Paper onSubmit={handleSubmit}>
     <Typography component="h1" variant="h5" align="center" sx={{ marginTop: '50px', marginBottom: '50px' , fontWeight: 'bold'}}>
         יצירת תרחיש
@@ -478,6 +533,7 @@ export default function HebrewScenarioCreate() {
         </Grid>
     </Grid>
     </Paper>
+    </>
 );
 
 }

@@ -3,6 +3,8 @@ import { Typography, CircularProgress, Box, TextField, Paper } from "@mui/materi
 import { useApi } from "../../api";
 import Scenario from "../Scenario/Scenario";
 import { useTheme } from '@mui/material/styles';
+import Back from '../../images/back-button.png'
+import { Link } from 'react-router-dom';
 
 export default function ScenarioList() {
   const { getScenarios } = useApi();
@@ -35,6 +37,13 @@ export default function ScenarioList() {
 
   return (
     <div>
+      <Link to="/english" style={{ textDecoration: 'none',position: 'absolute', top: '0', left: '0', marginTop: '100px', marginLeft: '20px'}}>
+          <img
+            style={{width: "50px", height: "50px"}}
+            src={Back}
+            alt="Report"
+          />
+      </Link>
       <Typography variant="h5" sx={{ margin: '16px' , color: '#1d3557', fontWeight: 'bold', display: 'flex', justifyContent: 'center'}}>
         Scenarios
       </Typography>

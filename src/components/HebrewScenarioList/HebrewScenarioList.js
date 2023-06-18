@@ -3,6 +3,8 @@ import { Typography, CircularProgress, Box, TextField, Paper } from "@mui/materi
 import HebrewScenario from "../Scenario/HebrewScenario";
 import { useApi } from "../../api";
 import { useTheme } from '@mui/material/styles';
+import Back from '../../images/back-button.png'
+import { Link } from 'react-router-dom';
 
 export default function HebrewScenarioList() {
   const { getHebrewScenarios } = useApi();
@@ -35,6 +37,13 @@ export default function HebrewScenarioList() {
 
   return (
     <div>
+      <Link to="/hebrewMenu" style={{ textDecoration: 'none',position: 'absolute', top: '0', left: '0', marginTop: '100px', marginLeft: '20px'}}>
+        <img
+          style={{width: "50px", height: "50px"}}
+          src={Back}
+          alt="Report"
+        />
+      </Link>
       <Typography variant="h5" sx={{ margin: '16px' , color: '#1d3557', fontWeight: 'bold', display: 'flex', justifyContent: 'center'}}>
         תרחישים
       </Typography>
