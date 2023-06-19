@@ -33,49 +33,75 @@ export default function HebrewScenarioCreate() {
       const theme = useTheme();
 
     
-      const formattedDescription = description
-      .split(" ")
-      .map((word) => {
-        const hasEnglishChars = /[A-Za-z]/.test(word);
-        if (hasEnglishChars) {
-          // If the word is English, embed it as left-to-right text
-          return "\u202B" + word + "\u202C";
-        } else {
-          // If the word is not English, embed it as right-to-left text
-          return "\u202B" + word + "\u202C";
+      function formatDescription(description) {
+        let lines = description.split('\n').map(line => {
+            let words = line.split(/\s+/);
+            let formatted = [];
+    
+            for (let i = 0; i < words.length; i++) {
+                let currentWord = words[i];
+                let hasEnglishChars = /[A-Za-z]/.test(currentWord);
+                let nextWordHasEnglishChars = i < words.length - 1 && /[A-Za-z]/.test(words[i + 1]);
+                let prevWordHasEnglishChars = i > 0 && /[A-Za-z]/.test(words[i - 1]);
+    
+                if (hasEnglishChars && (nextWordHasEnglishChars || prevWordHasEnglishChars)) {
+                    if (!prevWordHasEnglishChars) {
+                        // start of LTR group
+                        formatted.push('\u202A' + currentWord);
+                    } else {
+                        // continuation of LTR group
+                        formatted[formatted.length - 1] += " " + currentWord;
+                    }
+    
+                    if (!nextWordHasEnglishChars) {
+                        // end of LTR group
+                        formatted[formatted.length - 1] += '\u202C';
+                    }
+                } else {
+                    // RTL word
+                    formatted.push('\u202B' + currentWord + '\u202C');
+                }
+            }
+    
+            return formatted.join(' ');
+        });
+    
+        return lines.join('\n');
+    }
+
+    function formatArrayDescriptions(descriptions) {
+      return descriptions.map(description => {
+        let words = description.split(/\s+/);
+        let formatted = [];
+        let buffer = [];
+
+        for (let i = 0; i < words.length; i++) {
+            let currentWord = words[i];
+            let hasEnglishChars = /[A-Za-z]/.test(currentWord);
+
+            if (hasEnglishChars) {
+                // Collect English words into the buffer.
+                buffer.push(currentWord);
+            } else {
+                // If the buffer is not empty, we've hit the end of an English phrase.
+                if (buffer.length) {
+                    formatted.push('\u202A' + buffer.join(' ') + '\u202C');
+                    buffer = [];
+                }
+                // Push the non-English word into the formatted array.
+                formatted.push('\u202B' + currentWord + '\u202C');
+            }
         }
-      })
-      .join(" ");
 
-      const formattedTactic = tactic
-      .split(" ")
-      .map((word) => {
-        const hasEnglishChars = /[A-Za-z]/.test(word);
-        if (hasEnglishChars) {
-          // If the word is English, embed it as left-to-right text
-          return "\u202B" + word + "\u202C";
-        } else {
-          // If the word is not English, embed it as right-to-left text
-          return "\u202B" + word + "\u202C";
+        // If there are any remaining English words in the buffer, append them to the formatted array.
+        if (buffer.length) {
+            formatted.push('\u202A' + buffer.join(' ') + '\u202C');
         }
-      })
-      .join(" ");
 
-
-    const formattedRecommendations = recommendations.map((rec) => 
-      rec.split(" ")
-        .map((word) => {
-          const hasEnglishChars = /[A-Za-z]/.test(word);
-          if (hasEnglishChars) {
-            // If the word is English, embed it as left-to-right text
-            return "\u202A" + word + "\u202C";
-          } else {
-            // If the word is not English, embed it as right-to-left text
-            return "\u202B" + word + "\u202C";
-          }
-        })
-        .join(" ")
-    );
+        return formatted.join(' ');
+    });
+  }
+  
 
     useEffect(() => {
       fetchLatestScenarioNumber();
@@ -168,8 +194,8 @@ export default function HebrewScenarioCreate() {
         scenarioImpact: scenarioImpact,
         recommendations: recommendations,
         photos: photos,
-        tactic: formattedTactic,
-        description: formattedDescription,
+        tactic: formatDescription(tactic),
+        description: formatDescription(description),
         attackFlow: attackFlow,
         };
     
