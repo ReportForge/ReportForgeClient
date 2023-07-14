@@ -43,7 +43,7 @@ const EnglishMenu = () => {
 
   return (
     <div className={classes.container}>
-      <Link to="/" style={{ textDecoration: 'none',position: 'absolute', top: '0', left: '0', marginTop: '100px', marginLeft: '20px'}}>
+      <Link to="/home" style={{ textDecoration: 'none',position: 'absolute', top: '0', left: '0', marginTop: '100px', marginLeft: '20px'}}>
         <img
           style={{width: "50px", height: "50px"}}
           src={Back}

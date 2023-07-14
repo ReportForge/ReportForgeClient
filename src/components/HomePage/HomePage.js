@@ -1,9 +1,11 @@
 import React from 'react';
-import { Card, CardContent, Typography, Grid } from '@material-ui/core';
+import { Card, CardContent, Typography, Grid, Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { Link } from 'react-router-dom';
 import EnglishReport from '../../images/EnglishReport.png';
 import HebrewReport from '../../images/HebrewReport.png';
+import { useApi } from '../../api'; // make sure to import useApi
+import { useNavigate } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -33,13 +35,34 @@ const useStyles = makeStyles((theme) => ({
     height: 200, 
     width: 200,
   },
+  topRight: {
+    position: 'absolute',
+    top: theme.spacing(2),
+    right: theme.spacing(2),
+  }
 }));
 
 function HomePage() {
   const classes = useStyles();
+  const api = useApi(); // get api from useApi hook
+  const navigate = useNavigate();
+
+
+  const handleLogout = async () => {
+    try {
+      await api.logout(); // call the logout function from your api
+      localStorage.removeItem('loginResult'); // remove the login result from local storage
+      navigate('/');
+    } catch (error) {
+      console.error('Logout failed', error);
+    }
+  };
 
   return (
     <div className={classes.container}>
+      <div className={classes.topRight}>
+        <Button variant="outlined" color="primary" onClick={handleLogout}>Logout</Button>
+      </div>
       <Grid container direction="row" alignItems="center" justifyContent="center">
         <Grid item>
           <Link to="/english" style={{ textDecoration: 'none' }}>

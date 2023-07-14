@@ -9,12 +9,14 @@ import ScenarioCreatePage from './components/ScenarioCreatePage/ScenarioCreatePa
 import HebrewMenu from './components/HebrewMenu/HebrewMenu';
 import HebrewScenarioCreate from './components/HebrewScenarioCreate/HebrewScenarioCreate';
 import HebrewScenarioList from './components/HebrewScenarioList/HebrewScenarioList';
+import Login from './components/Login/Login';
 
 function AppRouter() {
   return (
     <BrowserRouter>
         <Routes>
-            <Route path="/" element={<HomePage/>} />
+            <Route path="/" element={<Login/>} />
+            <Route path="/Home" element={<HomePage/>} />
             <Route path="/english" element={<EnglishMenu/>} />
             <Route path="/englishReport" element={<EnglishReport/>} />
             <Route path="/scenarioCreate" element={<ScenarioCreate/>} />

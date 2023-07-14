@@ -9,6 +9,7 @@ import Logo from './images/reportForge.png'
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 
+
 const useStyles = makeStyles((theme) => ({
   title: {
     marginBottom: theme.spacing(1),
@@ -26,12 +27,12 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
   }
 }));
+
 function App() {
-
   const [darkMode, setDarkMode] = React.useState(false);
-
   const theme = darkMode ? darkTheme : lightTheme;
   const classes = useStyles();
+
 
   const handleDarkModeToggle = () => {
     setDarkMode(!darkMode);
