@@ -12,7 +12,7 @@ const client = axios.create({
 export function useApi() {
 
   const login = async (email, password) => {
-    const response = await axios.post(`https://eye-of-the-enemy.com/api/AppUsers/loginWithoutCaptcha`, { email, password });
+    const response = await axios.post(`https://eye-of-the-enemy.com/api/AppUsers/loginWithoutCaptcha`, { email, password } , { withCredentials: true });
     return response.data;
   };
 
