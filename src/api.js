@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useCallback} from 'react';
 
 // const baseURL = 'http://localhost:5000';
-const baseURL = 'http://reportForge.eye-of-the-enemy.com/api';
+const baseURL = 'https://reportForge.eye-of-the-enemy.com/api';
 
 const client = axios.create({
   baseURL: 'https://eye-of-the-enemy.com/api/'
