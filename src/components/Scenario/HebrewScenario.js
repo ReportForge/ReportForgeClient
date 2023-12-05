@@ -34,7 +34,7 @@ const ScenarioWrapper = styled(Paper)(({ theme }) => ({
 export default function HebrewScenario({ scenario  }) {
 
   const navigate = useNavigate();
-  const { approveHebrewScenario, disapproveHebrewScenario } = useApi(); 
+  const { approveHebrewScenario, disapproveHebrewScenario, deleteHebrewScenario } = useApi(); 
   const [isApproved, setIsApproved] = useState(scenario.status);
   const theme = useTheme();
 
@@ -42,7 +42,16 @@ export default function HebrewScenario({ scenario  }) {
     navigate(`/edit/hebrew/${scenario.scenarioNumber}`, { state: scenario });
   };
 
-  
+  const handleDelete = async (id) => {
+    try {
+      await deleteHebrewScenario(id); // Replace 'deleteHebrewScenario' with the actual function name
+      alert('Hebrew scenario deleted successfully');
+      // Optionally navigate away or update the state to remove the deleted scenario from the view
+    } catch (error) {
+      alert('Error deleting Hebrew scenario');
+      console.error('Failed to delete Hebrew scenario:', error);
+    }
+  };
 
   const handleApprove = async (id) => {
     try {
@@ -78,19 +87,6 @@ export default function HebrewScenario({ scenario  }) {
           <Alert severity="info">Approval status: Pending</Alert>
         )
       }
-      <Box 
-        display="flex" 
-        justifyContent="flex"
-        marginTop="10px" 
-      >
-        <Button
-          variant="contained"
-          style={{backgroundColor: theme.palette.mode === 'dark' ? '#45edf2' : '#49299a'}}
-          onClick={() => navigateToEdit(scenario)}
-          >
-          עריכה
-        </Button>
-      </Box>
       <Typography sx={{ marginBottom: '16px', marginTop: '16px', direction: 'rtl',  textAlign: 'right' }} variant="h6"> תרחיש {scenario.scenarioNumber}: {scenario.scenarioTitle}</Typography>
       <Typography style={{ direction: 'rtl',  textAlign: 'right' }}>רמת קושי במימוש התרחיש: {scenario.scenarioDifficulty}</Typography>
       <Typography sx={{ marginBottom: '16px', direction: 'rtl',  textAlign: 'right' }}> רמת סיכון לארגון: {scenario.scenarioImpact}</Typography>
@@ -151,6 +147,20 @@ export default function HebrewScenario({ scenario  }) {
         display="flex" 
         justifyContent="flex-end" 
       >
+      
+        <Button
+            variant="contained"
+            sx={{ 
+              marginLeft: '16px',
+              backgroundColor: '#d90429',
+              '&:hover': {
+                backgroundColor: '#ef233c',
+              },
+            }}
+            onClick={() => handleDelete(scenario._id)}
+          >
+            מחק תרחיש
+        </Button>
         {isApproved === "Approved" ? (
           <Button
             variant="contained"
@@ -180,6 +190,14 @@ export default function HebrewScenario({ scenario  }) {
             אשר את התרחיש
           </Button>
         )}
+        <Button
+          variant="contained"
+          
+          style={{backgroundColor: theme.palette.mode === 'dark' ? '#45edf2' : '#49299a', marginLeft: '16px'}}
+          onClick={() => navigateToEdit(scenario)}
+          >
+          עריכה
+        </Button>
       </Box>
     </ScenarioWrapper>
     </>

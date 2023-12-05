@@ -34,7 +34,7 @@ const ScenarioWrapper = styled(Paper)(({ theme }) => ({
 export default function Scenario({ scenario }) {
 
   const navigate = useNavigate();
-  const { approveScenario, disapproveScenario } = useApi(); 
+  const { approveScenario, disapproveScenario,deleteScenario } = useApi(); 
   const [isApproved, setIsApproved] = useState(scenario.status);
   const theme = useTheme();
 
@@ -42,7 +42,16 @@ export default function Scenario({ scenario }) {
     navigate(`/edit/${scenario.scenarioNumber}`, { state: scenario });
   };
 
-  
+  const handleDelete = async (id) => {
+    try {
+      await deleteScenario(id); // Replace 'deleteScenario' with the actual function name
+      alert('Scenario deleted successfully');
+      // Optionally navigate away or update the state to remove the deleted scenario from the view
+    } catch (error) {
+      alert('Error deleting scenario');
+      console.error('Failed to delete scenario:', error);
+    }
+  };
 
   const handleApprove = async (id) => {
     try {
@@ -146,9 +155,9 @@ export default function Scenario({ scenario }) {
           variant="contained"
           sx={{ 
             marginLeft: '16px',  // or any other value that suits your needs
-            backgroundColor: '#d90429', // Material-UI does not have a "pink" color in its default theme
+            backgroundColor: '#9C0945', // Material-UI does not have a "pink" color in its default theme
             '&:hover': {
-              backgroundColor: '#ef233c', // Change this to desired hover color
+              backgroundColor: '#a50b5e', // Change this to desired hover color
             },
           }}
           onClick={() => handleDisapprove(scenario._id)}
@@ -170,6 +179,19 @@ export default function Scenario({ scenario }) {
           Approve
         </Button>
       )}
+       <Button
+          variant="contained"
+          sx={{ 
+            marginLeft: '16px',
+            backgroundColor: '#d90429',
+            '&:hover': {
+              backgroundColor: '#ef233c',
+            },
+          }}
+          onClick={() => handleDelete(scenario._id)}
+        >
+          Delete
+        </Button>
     </ScenarioWrapper>
     </>
   );
