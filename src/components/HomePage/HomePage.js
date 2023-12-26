@@ -6,6 +6,7 @@ import EnglishReport from '../../images/EnglishReport.png';
 import HebrewReport from '../../images/HebrewReport.png';
 import { useApi } from '../../api'; // make sure to import useApi
 import { useNavigate } from 'react-router-dom';
+import { useTheme } from '@mui/material/styles';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -31,6 +32,23 @@ const useStyles = makeStyles((theme) => ({
       boxShadow: '0 5px 15px rgba(0,0,0,0.50), 0 5px 15px rgba(0,0,0,0.50)',
     },
   },
+  cardDark: {
+    background: '#161618',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: theme.spacing(1),
+    width: '300px',
+    height: '400px',
+    boxShadow: '0 3px 6px rgba(255,255,255,0.6), 0 3px 6px rgba(255,255,255,0.6)',
+    borderRadius: '10px',
+    transition: "0.3s",
+    "&:hover": {
+      transform: "scale(1.05)",
+      boxShadow: '0 3px 6px rgba(255,255,255,0.6), 0 3px 6px rgba(255,255,255,0.6)',
+    },
+  },
   media: {
     height: 200, 
     width: 200,
@@ -39,14 +57,18 @@ const useStyles = makeStyles((theme) => ({
     position: 'absolute',
     top: theme.spacing(2),
     right: theme.spacing(2),
-  }
+  },
+  whiteTextButton: {
+    color: 'blue',
+    background: 'white'
+  },
 }));
 
 function HomePage() {
   const classes = useStyles();
   const api = useApi(); // get api from useApi hook
   const navigate = useNavigate();
-
+  const theme = useTheme();
 
   const handleLogout = async () => {
     try {
@@ -61,19 +83,19 @@ function HomePage() {
   return (
     <div className={classes.container}>
       <div className={classes.topRight}>
-        <Button variant="outlined" color="primary" onClick={handleLogout}>Logout</Button>
+        <Button className={theme.palette.mode === 'dark' ? classes.whiteTextButton : ''} variant={theme.palette.mode === 'dark' ?"outlined":"contained"} color="primary" onClick={handleLogout}>Logout</Button>
       </div>
       <Grid container direction="row" alignItems="center" justifyContent="center">
         <Grid item>
           <Link to="/english" style={{ textDecoration: 'none' }}>
-            <Card className={classes.card}>
+            <Card className={theme.palette.mode === 'dark' ? classes.cardDark:classes.card}>
               <img
                 className={classes.media}
                 src={EnglishReport}
                 alt="English Report"
               />
               <CardContent>
-                <Typography variant="h4" style={{ color: '#1d3557', fontWeight: 'bold'}}>
+                <Typography variant="h4" style={{ color: theme.palette.mode === 'dark' ? '#D1D1D1':'#1d3557', fontWeight: 'bold'}}>
                   English Report
                 </Typography>
               </CardContent>
@@ -82,14 +104,14 @@ function HomePage() {
         </Grid>
         <Grid item>
           <Link to="/hebrewMenu" style={{ textDecoration: 'none' }}>
-            <Card className={classes.card}>
+            <Card className={theme.palette.mode === 'dark' ? classes.cardDark:classes.card}>
               <img
                 className={classes.media}
                 src={HebrewReport}
                 alt="Hebrew Report"
               />
               <CardContent>
-                <Typography variant="h4" style={{ color: '#1d3557', fontWeight: 'bold'}}>
+                <Typography variant="h4" style={{ color: theme.palette.mode === 'dark' ? '#D1D1D1':'#1d3557', fontWeight: 'bold'}}>
                   Hebrew Report
                 </Typography>
               </CardContent>

@@ -3,7 +3,8 @@ import { Typography, CircularProgress, Box, TextField, Paper } from "@mui/materi
 import { useApi } from "../../api";
 import Scenario from "../Scenario/Scenario";
 import { useTheme } from '@mui/material/styles';
-import Back from '../../images/back-button.png'
+import Back from '../../images/back-button.png';
+import whiteBack from '../../images/white-back.png';
 import { Link } from 'react-router-dom';
 
 export default function ScenarioList() {
@@ -40,7 +41,7 @@ export default function ScenarioList() {
       <Link to="/english" style={{ textDecoration: 'none',position: 'absolute', top: '0', left: '0', marginTop: '100px', marginLeft: '20px'}}>
           <img
             style={{width: "50px", height: "50px"}}
-            src={Back}
+            src={theme.palette.mode === "dark" ?  whiteBack : Back}
             alt="Report"
           />
       </Link>
