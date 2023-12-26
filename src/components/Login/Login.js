@@ -28,7 +28,7 @@ function Login() {
             navigate('/Home');
         } catch (error) {
             console.error(error);
-            navigate('/Home');
+            //navigate('/Home');
             // handle error (e.g. show error message)
             alert('Login failed: ' + error.message);
         }
