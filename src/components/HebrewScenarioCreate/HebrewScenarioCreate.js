@@ -70,38 +70,38 @@ export default function HebrewScenarioCreate() {
         return lines.join('\n');
     }
 
-    function formatArrayDescriptions(descriptions) {
-      return descriptions.map(description => {
-        let words = description.split(/\s+/);
-        let formatted = [];
-        let buffer = [];
+  //   function formatArrayDescriptions(descriptions) {
+  //     return descriptions.map(description => {
+  //       let words = description.split(/\s+/);
+  //       let formatted = [];
+  //       let buffer = [];
 
-        for (let i = 0; i < words.length; i++) {
-            let currentWord = words[i];
-            let hasEnglishChars = /[A-Za-z]/.test(currentWord);
+  //       for (let i = 0; i < words.length; i++) {
+  //           let currentWord = words[i];
+  //           let hasEnglishChars = /[A-Za-z]/.test(currentWord);
 
-            if (hasEnglishChars) {
-                // Collect English words into the buffer.
-                buffer.push(currentWord);
-            } else {
-                // If the buffer is not empty, we've hit the end of an English phrase.
-                if (buffer.length) {
-                    formatted.push('\u202A' + buffer.join(' ') + '\u202C');
-                    buffer = [];
-                }
-                // Push the non-English word into the formatted array.
-                formatted.push('\u202B' + currentWord + '\u202C');
-            }
-        }
+  //           if (hasEnglishChars) {
+  //               // Collect English words into the buffer.
+  //               buffer.push(currentWord);
+  //           } else {
+  //               // If the buffer is not empty, we've hit the end of an English phrase.
+  //               if (buffer.length) {
+  //                   formatted.push('\u202A' + buffer.join(' ') + '\u202C');
+  //                   buffer = [];
+  //               }
+  //               // Push the non-English word into the formatted array.
+  //               formatted.push('\u202B' + currentWord + '\u202C');
+  //           }
+  //       }
 
-        // If there are any remaining English words in the buffer, append them to the formatted array.
-        if (buffer.length) {
-            formatted.push('\u202A' + buffer.join(' ') + '\u202C');
-        }
+  //       // If there are any remaining English words in the buffer, append them to the formatted array.
+  //       if (buffer.length) {
+  //           formatted.push('\u202A' + buffer.join(' ') + '\u202C');
+  //       }
 
-        return formatted.join(' ');
-    });
-  }
+  //       return formatted.join(' ');
+  //   });
+  // }
   
 
     useEffect(() => {
