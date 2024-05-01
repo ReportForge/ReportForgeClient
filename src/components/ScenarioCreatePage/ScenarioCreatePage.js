@@ -30,7 +30,7 @@ export default function ScenarioCreate() {
   const [scenarioTitle, setScenarioTitle] = useState(scenarioToEdit ? scenarioToEdit.scenarioTitle : '');
   const [scenarioDifficulty, setScenarioDifficulty] = useState(scenarioToEdit ? scenarioToEdit.scenarioDifficulty : '');
   const [scenarioImpact, setScenarioImpact] = useState(scenarioToEdit ? scenarioToEdit.scenarioImpact : '');
-  const [recommendation, setRecommendation] = useState(scenarioToEdit ? scenarioToEdit.recommendation : '');
+  // const [recommendation, setRecommendation] = useState(scenarioToEdit ? scenarioToEdit.recommendation : '');
   const [recommendations, setRecommendations] = useState(scenarioToEdit ? scenarioToEdit.recommendations : []);
   const [photos, setPhotos] = useState(scenarioToEdit ? scenarioToEdit.photos : []);
   const [photosToShow, setPhotosToShow] = useState([]);
@@ -98,15 +98,6 @@ export default function ScenarioCreate() {
     setAttackFlow(newAttackFlow);
   };
 
-  const handleDeleteRecommendation = (recommendationIndex) => {
-    setRecommendations(recommendations.filter((_, index) => index !== recommendationIndex));
-  };
-
-  const handleAddRecommendation = () => {
-    setRecommendations([...recommendations, recommendation]);
-    setRecommendation("");
-  };
-
   const handleFileUpload = (event) => {
     const files = Array.from(event.target.files);
     if (!scenarioToEdit) {
@@ -147,7 +138,7 @@ export default function ScenarioCreate() {
 
 
 
-
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
 

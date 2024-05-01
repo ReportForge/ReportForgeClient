@@ -138,7 +138,6 @@ export default function Scenario({ scenario }) {
         <Typography variant="subtitle1">Mitigations:</Typography>
         <ul>
           {scenario.recommendations.map((rec, index) => (
-            console.log(rec),
             <li key={index}>
               <Typography variant="subtitle1">{rec.systemName}</Typography>
               <ul>
