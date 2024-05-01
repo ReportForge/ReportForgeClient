@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import { Paper, Typography, Button } from "@mui/material";
 import { styled } from "@mui/system";
 import { useNavigate } from 'react-router-dom';
@@ -34,7 +34,7 @@ const ScenarioWrapper = styled(Paper)(({ theme }) => ({
 export default function Scenario({ scenario }) {
 
   const navigate = useNavigate();
-  const { approveScenario, disapproveScenario,deleteScenario } = useApi(); 
+  const { approveScenario, disapproveScenario, deleteScenario } = useApi();
   const [isApproved, setIsApproved] = useState(scenario.status);
   const theme = useTheme();
 
@@ -76,29 +76,29 @@ export default function Scenario({ scenario }) {
 
   return (
     <>
-    <ColorChangeAnimation />
-    <ScenarioWrapper sx={{ margin: '16px', marginBottom: 5}}>
-      {
-        isApproved === "Approved" ? (
-          <Alert severity="success">Approval status: Approved</Alert>
-        ) : isApproved === "Disapproved" ? (
-          <Alert severity="warning">Approval status: Disapproved</Alert>
-        ) : (
-          <Alert severity="info">Approval status: Pending</Alert>
-        )
-      }
+      <ColorChangeAnimation />
+      <ScenarioWrapper sx={{ margin: '16px', marginBottom: 5 }}>
+        {
+          isApproved === "Approved" ? (
+            <Alert severity="success">Approval status: Approved</Alert>
+          ) : isApproved === "Disapproved" ? (
+            <Alert severity="warning">Approval status: Disapproved</Alert>
+          ) : (
+            <Alert severity="info">Approval status: Pending</Alert>
+          )
+        }
 
-      <Typography sx={{ marginBottom: '16px', marginTop: '16px' }} variant="h6">Scenario {scenario.scenarioNumber}: {scenario.scenarioTitle}</Typography>
-      <Typography>Difficulty: {scenario.scenarioDifficulty}</Typography>
-      <Typography sx={{ marginBottom: '16px' }}> Level of Impact: {scenario.scenarioImpact}</Typography>
-      <Typography variant="subtitle1">Tactic – Code Execution and Persistence:</Typography>
-      <Typography sx={{ marginBottom: '16px' }}>{scenario.tactic}</Typography>
-      <Typography variant="subtitle1">Description of the Attack:</Typography>
-      <Typography sx={{ marginBottom: '16px' }}>{scenario.description}</Typography>
-      <Typography variant="subtitle1">Attack Flow:</Typography>
-      <div>
-        {(scenario.attackFlowToShow && scenario.attackFlowToShow.length > 0)
-          ? scenario.attackFlowToShow.map((photo, index) => (
+        <Typography sx={{ marginBottom: '16px', marginTop: '16px' }} variant="h6">Scenario {scenario.scenarioNumber}: {scenario.scenarioTitle}</Typography>
+        <Typography>Difficulty: {scenario.scenarioDifficulty}</Typography>
+        <Typography sx={{ marginBottom: '16px' }}> Level of Impact: {scenario.scenarioImpact}</Typography>
+        <Typography variant="subtitle1">Tactic – Code Execution and Persistence:</Typography>
+        <Typography sx={{ marginBottom: '16px' }}>{scenario.tactic}</Typography>
+        <Typography variant="subtitle1">Description of the Attack:</Typography>
+        <Typography sx={{ marginBottom: '16px' }}>{scenario.description}</Typography>
+        <Typography variant="subtitle1">Attack Flow:</Typography>
+        <div>
+          {(scenario.attackFlowToShow && scenario.attackFlowToShow.length > 0)
+            ? scenario.attackFlowToShow.map((photo, index) => (
               <img
                 key={index}
                 src={URL.createObjectURL(photo)}
@@ -106,7 +106,7 @@ export default function Scenario({ scenario }) {
                 style={{ maxWidth: "400px", maxHeight: "300px" }}
               />
             ))
-          : scenario.attackFlow.map((photo, index) => (
+            : scenario.attackFlow.map((photo, index) => (
               <img
                 key={index}
                 src={photo}
@@ -114,11 +114,11 @@ export default function Scenario({ scenario }) {
                 style={{ maxWidth: "400px", maxHeight: "300px" }}
               />
             ))}
-      </div>
-      <Typography variant="subtitle1">Proof of Concept:</Typography>
-      <div>
-        {(scenario.photosToShow && scenario.photosToShow.length > 0)
-          ? scenario.photosToShow.map((photo, index) => (
+        </div>
+        <Typography variant="subtitle1">Proof of Concept:</Typography>
+        <div>
+          {(scenario.photosToShow && scenario.photosToShow.length > 0)
+            ? scenario.photosToShow.map((photo, index) => (
               <img
                 key={index}
                 src={URL.createObjectURL(photo)}
@@ -126,7 +126,7 @@ export default function Scenario({ scenario }) {
                 style={{ maxWidth: "400px", maxHeight: "300px" }}
               />
             ))
-          : scenario.photos.map((photo, index) => (
+            : scenario.photos.map((photo, index) => (
               <img
                 key={index}
                 src={photo}
@@ -134,54 +134,61 @@ export default function Scenario({ scenario }) {
                 style={{ maxWidth: "400px", maxHeight: "300px" }}
               />
             ))}
-      </div>
-      <Typography variant="subtitle1">Mitigations:</Typography>
-      <ul>
-        {scenario.recommendations.map((recommendation, index) => (
-          <li key={index}>
-            <Typography>{recommendation}</Typography>
-          </li>
-        ))}
-      </ul>
-      <Button
-        variant="contained"
-        style={{backgroundColor: theme.palette.mode === 'dark' ? '#45edf2' : '#49299a'}}
-        onClick={() => navigateToEdit(scenario)}
-      >
-        Edit
-      </Button>
-      {isApproved === "Approved" ? (
+        </div>
+        <Typography variant="subtitle1">Mitigations:</Typography>
+        <ul>
+          {scenario.recommendations.map((rec, index) => (
+            console.log(rec),
+            <li key={index}>
+              <Typography variant="subtitle1">{rec.systemName}</Typography>
+              <ul>
+                {rec.mitigations.map((mitigation, idx) => (
+                  <li key={idx}>{mitigation}</li>
+                ))}
+              </ul>
+            </li>
+          ))}
+        </ul>
+
         <Button
           variant="contained"
-          sx={{ 
-            marginLeft: '16px',  // or any other value that suits your needs
-            backgroundColor: '#9C0945', // Material-UI does not have a "pink" color in its default theme
-            '&:hover': {
-              backgroundColor: '#a50b5e', // Change this to desired hover color
-            },
-          }}
-          onClick={() => handleDisapprove(scenario._id)}
+          style={{ backgroundColor: theme.palette.mode === 'dark' ? '#45edf2' : '#49299a' }}
+          onClick={() => navigateToEdit(scenario)}
         >
-          Disapprove
+          Edit
         </Button>
-      ) : (
+        {isApproved === "Approved" ? (
+          <Button
+            variant="contained"
+            sx={{
+              marginLeft: '16px',  // or any other value that suits your needs
+              backgroundColor: '#9C0945', // Material-UI does not have a "pink" color in its default theme
+              '&:hover': {
+                backgroundColor: '#a50b5e', // Change this to desired hover color
+              },
+            }}
+            onClick={() => handleDisapprove(scenario._id)}
+          >
+            Disapprove
+          </Button>
+        ) : (
+          <Button
+            variant="contained"
+            sx={{
+              marginLeft: '16px',  // or any other value that suits your needs
+              backgroundColor: '#039487', // Material-UI does not have a "pink" color in its default theme
+              '&:hover': {
+                backgroundColor: '#04dfcc', // Change this to desired hover color
+              },
+            }}
+            onClick={() => handleApprove(scenario._id)}
+          >
+            Approve
+          </Button>
+        )}
         <Button
           variant="contained"
-          sx={{ 
-            marginLeft: '16px',  // or any other value that suits your needs
-            backgroundColor: '#039487', // Material-UI does not have a "pink" color in its default theme
-            '&:hover': {
-              backgroundColor: '#04dfcc', // Change this to desired hover color
-            },
-          }}
-          onClick={() => handleApprove(scenario._id)}
-        >
-          Approve
-        </Button>
-      )}
-       <Button
-          variant="contained"
-          sx={{ 
+          sx={{
             marginLeft: '16px',
             backgroundColor: '#d90429',
             '&:hover': {
@@ -192,7 +199,7 @@ export default function Scenario({ scenario }) {
         >
           Delete
         </Button>
-    </ScenarioWrapper>
+      </ScenarioWrapper>
     </>
   );
 }
