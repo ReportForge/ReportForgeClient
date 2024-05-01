@@ -161,9 +161,9 @@ function OpeningPageForm() {
     <Container component="main" maxWidth="md">
       <div className={classes.formContainer}>
         <img src={logo} alt="Company Logo" className={classes.logo} />
-        <Typography component="h1" variant="h5" style={{color: "#Oe1625"}}>
+        {/* <Typography component="h1" variant="h5" style={{color: "#Oe1625"}}>
           Opening Page
-        </Typography>
+        </Typography> */}
         <form className={classes.form} noValidate>
           <Grid container spacing={2}>
           <Grid item xs={12}>
