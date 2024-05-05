@@ -31,11 +31,14 @@ const ScenarioWrapper = styled(Paper)(({ theme }) => ({
   animation: 'color-change 4s infinite',
 }));
 
-export default function Scenario({ scenario }) {
+export default function Scenario({ scenario: initialScenario, uploadPage, refreshScenarios}) {
 
   const navigate = useNavigate();
-  const { approveScenario, disapproveScenario, deleteScenario } = useApi();
+  const [scenario, setScenario] = useState(initialScenario);
+  const { approveScenario, disapproveScenario, deleteScenario, updateScenario } = useApi();
   const [isApproved, setIsApproved] = useState(scenario.status);
+  
+
   const theme = useTheme();
 
   const navigateToEdit = (scenario) => {
@@ -73,6 +76,40 @@ export default function Scenario({ scenario }) {
       console.error('Failed to disapprove scenario:', error);
     }
   }
+
+  const handleFileUpload = async (event) => {
+    const files = Array.from(event.target.files);
+    const photoPromises = files.map((file) => {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          resolve(reader.result);
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    });
+
+    try {
+      const newPhotos = await Promise.all(photoPromises); // Wait until all files are read
+      
+      // Ensure photos state is updated before sending the update to the server
+      const updatedScenario = {
+        ...scenario,
+        photos: [...newPhotos]
+      };
+      const response = await updateScenario(scenario._id, updatedScenario); // You should await this inside the try block
+      // Update the scenario state with the response data
+      if (response.data) {
+        console.log('Update successful:', response);
+        setScenario(response.data);
+        refreshScenarios();
+      }
+    } catch (error) {
+      console.error('Error uploading files:', error);
+    }
+  };
+
 
   return (
     <>
@@ -117,8 +154,8 @@ export default function Scenario({ scenario }) {
         </div>
         <Typography variant="subtitle1">Proof of Concept:</Typography>
         <div>
-          {(scenario.photosToShow && scenario.photosToShow.length > 0)
-            ? scenario.photosToShow.map((photo, index) => (
+          {(scenario.photosToShow && scenario.photosToShow.length > 0) ? (
+            scenario.photosToShow.map((photo, index) => (
               <img
                 key={index}
                 src={URL.createObjectURL(photo)}
@@ -126,15 +163,54 @@ export default function Scenario({ scenario }) {
                 style={{ maxWidth: "400px", maxHeight: "300px" }}
               />
             ))
-            : scenario.photos.map((photo, index) => (
-              <img
-                key={index}
-                src={photo}
-                alt={`scenario-${index}`}
-                style={{ maxWidth: "400px", maxHeight: "300px" }}
+          ) : (scenario.photos && scenario.photos.length > 0) ? (
+            <>
+              {scenario.photos.map((photo, index) => (
+                <img
+                  key={index}
+                  src={photo}
+                  alt={`scenario-${index}`}
+                  style={{ maxWidth: "400px", maxHeight: "300px" }}
+                />
+              ))}
+              <input
+                type="file"
+                multiple
+                onChange={handleFileUpload}
+                style={{ display: 'none' }}
+                id={`file-upload-update-${scenario._id}`}
               />
-            ))}
+              <label htmlFor={`file-upload-update-${scenario._id}`}>
+                <Button variant="contained" component="span">
+                  Change Proof
+                </Button>
+              </label>
+            </>
+          ) : (
+            uploadPage ? (
+              <>
+                <input
+                  type="file"
+                  multiple
+                  onChange={handleFileUpload}
+                  style={{ display: 'none' }}
+                  id={`file-upload-${scenario._id}`}
+                />
+                <label htmlFor={`file-upload-${scenario._id}`}>
+                  <Button variant="contained" component="span">
+                    Add Proof
+                  </Button>
+                </label>
+              </>
+            ) : (
+              <Typography variant="subtitle1" style={{ marginTop: '5px', marginBottom: '5px' }}>Empty</Typography>
+            )
+          )}
         </div>
+
+
+
+
         <Typography variant="subtitle1">Mitigations:</Typography>
         <ul>
           {scenario.recommendations.map((rec, index) => (

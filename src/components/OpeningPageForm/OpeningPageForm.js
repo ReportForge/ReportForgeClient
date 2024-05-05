@@ -1,5 +1,5 @@
 import React from 'react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Container, Typography, TextField, Grid, Button, Checkbox, FormControlLabel, CircularProgress, Paper, Box } from '@mui/material';
 import logo from '../../images/logo.png';
@@ -41,30 +41,37 @@ const useStyles = makeStyles((theme) => ({
 
 function OpeningPageForm() {
   const classes = useStyles();
-  const { getScenarios } = useApi();
+  const { getScenarios, removeAllPhotosFromScenarios } = useApi();
   const [selectedScenarios, setSelectedScenarios] = useState([]);
   const [imageData, setImageData] = useState('');
-  const [formData, setFormData] = useState({companyName: '',documentName: '', imageTag: '',date: ''});
+  const [formData, setFormData] = useState({ companyName: '', documentName: '', imageTag: '', date: '' });
   const [scenarios, setScenarios] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');  
+  const [searchTerm, setSearchTerm] = useState('');
   const theme = useTheme();
 
+  const fetchScenarios = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const response = await getScenarios();
+      const approvedScenarios = response.data.filter(scenario => scenario.status === 'Approved');
+      setScenarios(approvedScenarios);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [getScenarios]); // Assuming getScenarios doesn't change, or include its dependencies as needed
+
+
+
   useEffect(() => {
-    const fetchScenarios = async () => {
-      try {
-        const response = await getScenarios();
-        const approvedScenarios = response.data.filter(scenario => scenario.status === 'Approved');
-        setScenarios(approvedScenarios);
-        setIsLoading(false);
-      } catch (error) {
-        console.log(error);
-        setIsLoading(false);
-      }
-    };
     fetchScenarios();
-  },[getScenarios]);
-  
+  }, [fetchScenarios]);
+
+
+
+
 
   const handleScenarioSelectionChange = (scenario, isChecked) => {
     if (isChecked) {
@@ -88,7 +95,7 @@ function OpeningPageForm() {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setFormData({...formData, [name]: reader.result});
+        setFormData({ ...formData, [name]: reader.result });
         setImageData(reader.result);
       };
       reader.readAsDataURL(file);
@@ -97,7 +104,7 @@ function OpeningPageForm() {
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    setFormData({...formData,[name]: value,});
+    setFormData({ ...formData, [name]: value, });
   };
 
   // const AddScenarios = (scenarios) => {
@@ -109,7 +116,7 @@ function OpeningPageForm() {
     const templateResponse = await fetch(testFile);
     const templateArrayBuffer = await templateResponse.arrayBuffer();
     const zip = new PizZip(templateArrayBuffer);
-  
+
     const imageModuleOptions = {
       centered: false,
       getImage: (tagValue, tagName) => {
@@ -121,43 +128,45 @@ function OpeningPageForm() {
       getSize: (img, tagValue, tagName) => {
         // Only handle imageTag
         if (tagName === 'imageTag') {
-          return [600, 150]; // You can customize the image size here, e.g., [width, height]
+          return [600, 300]; // You can customize the image size here, e.g., [width, height]
         }
       },
     };
-  
+
     const doc = new Docxtemplater()
       .attachModule(new ImageModule(imageModuleOptions))
       .loadZip(zip);
-  
+
     doc.setData({
       ...formData,
       scenarios: (scenarios).map((scenario, index) => ({
         ...scenario,
         scenarioNumber: ++counter,
         recommendations: scenario.recommendations,
-        photos: scenario.photos.map((photo) => ({imageTag: photo})),
-        attackFlow: scenario.attackFlow.map((attackFlow) => ({imageTag: attackFlow})),
+        photos: scenario.photos.map((photo) => ({ imageTag: photo })),
+        attackFlow: scenario.attackFlow.map((attackFlow) => ({ imageTag: attackFlow })),
         // Add any other necessary transformations to the scenario object here
       })),
     });
     doc.render();
-  
+
     const output = doc.getZip().generate({ type: 'blob' });
-    saveAs(output, 'output.docx');
+    saveAs(output, `${formData.documentName}.docx`);
+    await removeAllPhotosFromScenarios();
+    setSelectedScenarios([]);
+    fetchScenarios();
   }
-  
+
 
   const handleSubmit = (event) => {
-    event.preventDefault();    
+    event.preventDefault();
     generateDocx(formData, selectedScenarios);
-    setSelectedScenarios([]);
   }
 
-  
-  
+
+
   return (
-    
+
     <Container component="main" maxWidth="md">
       <div className={classes.formContainer}>
         <img src={logo} alt="Company Logo" className={classes.logo} />
@@ -166,7 +175,7 @@ function OpeningPageForm() {
         </Typography> */}
         <form className={classes.form} noValidate>
           <Grid container spacing={2}>
-          <Grid item xs={12}>
+            <Grid item xs={12}>
               <TextField
                 variant="outlined"
                 required
@@ -183,7 +192,7 @@ function OpeningPageForm() {
                 required
                 fullWidth
                 id="date"
-                label={<span style={{ color: theme.palette.mode === 'dark' ? '#45edf2' : '#49299a' , fontWeight: 'bold' }}>Date</span>}
+                label={<span style={{ color: theme.palette.mode === 'dark' ? '#45edf2' : '#49299a', fontWeight: 'bold' }}>Date</span>}
                 name="date"
                 type="date"
                 InputLabelProps={{
@@ -198,7 +207,7 @@ function OpeningPageForm() {
                 required
                 fullWidth
                 id="companyName"
-                label={<span style={{ color: theme.palette.mode === 'dark' ? '#45edf2' : '#49299a' , fontWeight: 'bold' }}>Company Name</span>}
+                label={<span style={{ color: theme.palette.mode === 'dark' ? '#45edf2' : '#49299a', fontWeight: 'bold' }}>Company Name</span>}
                 name="companyName"
                 onChange={handleInputChange}
               />
@@ -210,24 +219,24 @@ function OpeningPageForm() {
                 style={{ display: 'none' }}
                 id="raised-button-file"
                 type="file"
-                onChange={(event)=> handleImageChange(event,'imageTag')}
+                onChange={(event) => handleImageChange(event, 'imageTag')}
                 name='imageTag'
               />
               <label htmlFor="raised-button-file">
-              <Grid container justifyContent="center">
-                <Button variant="contained" color="secondary" component="span" className={classes.button} style={{background: theme.palette.mode === 'dark' ? '#45edf2' : '#49299a' , marginBottom: "40px"}}>
-                  Add Company Image
-                </Button>
-              </Grid>
+                <Grid container justifyContent="center">
+                  <Button variant="contained" color="secondary" component="span" className={classes.button} style={{ background: theme.palette.mode === 'dark' ? '#45edf2' : '#49299a', marginBottom: "40px" }}>
+                    Add Company Image
+                  </Button>
+                </Grid>
               </label>
             </Grid>
-              {imageData && (
-                <Grid item xs={12} style={{display: 'flex',justifyContent: 'center',alignItems: 'center',}}>
-                  <img src={imageData} alt="Chosen Company" style={{ maxWidth: '25%', height: 'auto' }} />
-                </Grid>
-              )}
+            {imageData && (
+              <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', }}>
+                <img src={imageData} alt="Chosen Company" style={{ maxWidth: '25%', height: 'auto' }} />
+              </Grid>
+            )}
             <Grid item xs={12}>
-              <Typography variant="h5" style={{color: "#Oe1625"}}>
+              <Typography variant="h5" style={{ color: "#Oe1625" }}>
                 Select Scenarios
               </Typography>
               <Box sx={{ display: "flex", justifyContent: "center", marginBottom: '16px' }}>
@@ -243,7 +252,7 @@ function OpeningPageForm() {
               {!isLoading ? (
                 filteredScenarios.map((scenario, index) => (
                   <div key={index}>
-                    <Scenario scenario={scenario} />
+                    <Scenario refreshScenarios={fetchScenarios} scenario={scenario} uploadPage={true} />
                     <FormControlLabel
                       control={
                         <Checkbox
@@ -262,7 +271,7 @@ function OpeningPageForm() {
                   </div>
                 ))
               ) : (
-                <CircularProgress /> 
+                <CircularProgress />
               )}
             </Grid>
             <Grid item xs={12}>
@@ -273,7 +282,7 @@ function OpeningPageForm() {
                 color="primary"
                 className={classes.submit}
                 onClick={handleSubmit}
-                style={{ background: theme.palette.mode === 'dark' ? '#45edf2' : '#49299a'  }}
+                style={{ background: theme.palette.mode === 'dark' ? '#45edf2' : '#49299a' }}
               >
                 Submit
               </Button>

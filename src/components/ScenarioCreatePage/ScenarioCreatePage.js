@@ -33,7 +33,7 @@ export default function ScenarioCreate() {
   // const [recommendation, setRecommendation] = useState(scenarioToEdit ? scenarioToEdit.recommendation : '');
   const [recommendations, setRecommendations] = useState(scenarioToEdit ? scenarioToEdit.recommendations : []);
   const [photos, setPhotos] = useState(scenarioToEdit ? scenarioToEdit.photos : []);
-  const [photosToShow, setPhotosToShow] = useState([]);
+  // const [photosToShow, setPhotosToShow] = useState([]);
   const [latestScenarioNumber, setLatestScenarioNumber] = useState(0);
   const [tactic, setTactic] = useState(scenarioToEdit ? scenarioToEdit.tactic : '');
   const [description, setDescription] = useState(scenarioToEdit ? scenarioToEdit.description : '');
@@ -82,13 +82,13 @@ export default function ScenarioCreate() {
   };
 
 
-  const handleRemovePhoto = (photoIndex) => {
-    const newPhotosToShow = photosToShow.filter((photo, index) => index !== photoIndex);
-    const newPhotos = photos.filter((photo, index) => index !== photoIndex);
+  // const handleRemovePhoto = (photoIndex) => {
+  //   const newPhotosToShow = photosToShow.filter((photo, index) => index !== photoIndex);
+  //   const newPhotos = photos.filter((photo, index) => index !== photoIndex);
 
-    setPhotosToShow(newPhotosToShow);
-    setPhotos(newPhotos);
-  };
+  //   setPhotosToShow(newPhotosToShow);
+  //   setPhotos(newPhotos);
+  // };
 
   const handleRemoveAttackFlow = (flowIndex) => {
     const newAttackFlowToShow = attackFlowToShow.filter((flow, index) => index !== flowIndex);
@@ -98,25 +98,25 @@ export default function ScenarioCreate() {
     setAttackFlow(newAttackFlow);
   };
 
-  const handleFileUpload = (event) => {
-    const files = Array.from(event.target.files);
-    if (!scenarioToEdit) {
-      setPhotosToShow((prevPhotosToShow) => [...prevPhotosToShow, ...files]);
-    }
+  // const handleFileUpload = (event) => {
+  //   const files = Array.from(event.target.files);
+  //   if (!scenarioToEdit) {
+  //     setPhotosToShow((prevPhotosToShow) => [...prevPhotosToShow, ...files]);
+  //   }
 
-    if (files.length > 0) {
-      files.forEach((file) => {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setPhotos((prevPhotos) => [
-            ...prevPhotos,
-            reader.result,
-          ]);
-        };
-        reader.readAsDataURL(file);
-      });
-    }
-  };
+  //   if (files.length > 0) {
+  //     files.forEach((file) => {
+  //       const reader = new FileReader();
+  //       reader.onloadend = () => {
+  //         setPhotos((prevPhotos) => [
+  //           ...prevPhotos,
+  //           reader.result,
+  //         ]);
+  //       };
+  //       reader.readAsDataURL(file);
+  //     });
+  //   }
+  // };
 
   const handleAttackFlowUpload = (event) => {
     const files = Array.from(event.target.files);
@@ -153,7 +153,7 @@ export default function ScenarioCreate() {
       description: description,
       attackFlow: attackFlow,
     };
-    console.log(scenario);
+
     try {
       let response;
       if (scenarioToEdit) {
@@ -169,7 +169,7 @@ export default function ScenarioCreate() {
       console.log(response.data); // The response of your api
       setRecommendations([]);
       setPhotos([]);
-      setPhotosToShow([]);
+      // setPhotosToShow([]);
       setTactic("");
       setDescription("");
       setAttackFlow([]);
@@ -320,7 +320,7 @@ export default function ScenarioCreate() {
                 ))}
             </Grid>
           </Grid>
-          <Grid item xs={12}>
+          {/* <Grid item xs={12}>
             <Grid container justifyContent="center">
               <input
                 accept="image/*"
@@ -336,8 +336,8 @@ export default function ScenarioCreate() {
                 </Button>
               </label>
             </Grid>
-          </Grid>
-          <Grid item xs={12}>
+          </Grid> */}
+          {/* <Grid item xs={12}>
             <Grid container spacing={2} justifyContent="center" alignItems="center">
               {(photosToShow && photosToShow.length > 0)
                 ? photosToShow.map((photo, index) => (
@@ -362,7 +362,7 @@ export default function ScenarioCreate() {
                   </Grid>
                 ))}
             </Grid>
-          </Grid>
+          </Grid> */}
           {/* <Grid item xs={8}>
             <TextField
               label={<span style={{ color: theme.palette.mode === 'dark' ? '#45edf2' : '#49299a', fontWeight: 'bold' }}>Mitigations</span>}
@@ -463,7 +463,7 @@ export default function ScenarioCreate() {
                       </Grid>
                     ))}
                 </Grid>
-                <Typography sx={{ marginTop: '16px' }}><b>Proof of Concept:</b></Typography>
+                {/* <Typography sx={{ marginTop: '16px' }}><b>Proof of Concept:</b></Typography>
                 <Grid container spacing={2} justifyContent="center" alignItems="center">
                   {(photosToShow && photosToShow.length > 0)
                     ? photosToShow.map((photo, index) => (
@@ -484,7 +484,7 @@ export default function ScenarioCreate() {
                         />
                       </Grid>
                     ))}
-                </Grid>
+                </Grid> */}
                 <Grid container xs={12}>
                   <Typography sx={{ marginTop: '16px' }} >
                   <b>Mitigations:</b>

@@ -1,6 +1,6 @@
 // api.js
 import axios from 'axios';
-import { useCallback} from 'react';
+import { useCallback } from 'react';
 
 //const baseURL = 'http://localhost:5000';
 const baseURL = 'https://reportForge.eye-of-the-enemy.com/api';
@@ -20,24 +20,24 @@ export function useApi() {
   const logout = async () => {
     // Retrieve the access token from local storage
     const accessTokenRaw = localStorage.getItem('loginResult');
-  
+
     // Parse JSON string back to object
     const accessToken = JSON.parse(accessTokenRaw);
-  
+
     if (!accessToken) {
       throw new Error('No access token found');
     }
-  
+
     // Set the access token in the Axios instance's default headers
     client.defaults.headers.common['Authorization'] = accessToken.id;
-  
+
     // Use the Axios instance to make the request
     await client.post('AppUsers/logout');
-  
+
     // Remove the access token from local storage
     localStorage.removeItem('loginResult');
   };
-  
+
 
 
   const createScenario = async (scenario) => {
@@ -68,8 +68,8 @@ export function useApi() {
     return await axios.put(`${baseURL}/scenarios/disapprove/${id}`);
   };
 
-   // HebrewScenario functions
-   const createHebrewScenario = async (hebrewScenario) => {
+  // HebrewScenario functions
+  const createHebrewScenario = async (hebrewScenario) => {
     return await axios.post(`${baseURL}/hebrewScenario`, hebrewScenario);
   };
 
@@ -97,6 +97,10 @@ export function useApi() {
     return await axios.put(`${baseURL}/hebrewScenario/disapprove/${id}`);
   };
 
+  const removeAllPhotosFromScenarios = async () => {
+    return await axios.post(`${baseURL}/scenarios/removePhotos`);
+  };
+
   return {
     logout,
     login,
@@ -113,6 +117,7 @@ export function useApi() {
     deleteHebrewScenario,
     getLatestHebrewScenarioNumber,
     approveHebrewScenario,
-    disapproveHebrewScenario
+    disapproveHebrewScenario,
+    removeAllPhotosFromScenarios
   };
 }
