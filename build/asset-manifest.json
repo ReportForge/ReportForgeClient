@@ -1,10 +1,10 @@
 {
   "files": {
     "main.css": "/static/css/main.e6c13ad2.css",
-    "main.js": "/static/js/main.fd2f18c3.js",
+    "main.js": "/static/js/main.d1313d32.js",
     "static/js/787.cc90f03b.chunk.js": "/static/js/787.cc90f03b.chunk.js",
     "static/media/test.docx": "/static/media/test.b52cf8354d1b4584c1b0.docx",
-    "static/media/hebrewReport.docx": "/static/media/hebrewReport.9c361d37d83d9a91bffa.docx",
+    "static/media/hebrewReport.docx": "/static/media/hebrewReport.2c9aa1359ad9e96190b6.docx",
     "static/media/reportForge.png": "/static/media/reportForge.b21835b5f12705b1af6b.png",
     "static/media/HebrewReport.png": "/static/media/HebrewReport.b8410947a268c9b67e20.png",
     "static/media/EnglishReport.png": "/static/media/EnglishReport.a5ceacac88c2f85089dc.png",
@@ -18,11 +18,11 @@
     "static/media/hebrewReportCreate.png": "/static/media/hebrewReportCreate.bb8eff83aa1c600e73af.png",
     "index.html": "/index.html",
     "main.e6c13ad2.css.map": "/static/css/main.e6c13ad2.css.map",
-    "main.fd2f18c3.js.map": "/static/js/main.fd2f18c3.js.map",
+    "main.d1313d32.js.map": "/static/js/main.d1313d32.js.map",
     "787.cc90f03b.chunk.js.map": "/static/js/787.cc90f03b.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.e6c13ad2.css",
-    "static/js/main.fd2f18c3.js"
+    "static/js/main.d1313d32.js"
   ]
 }

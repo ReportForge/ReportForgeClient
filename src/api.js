@@ -101,6 +101,10 @@ export function useApi() {
     return await axios.post(`${baseURL}/scenarios/removePhotos`);
   };
 
+  const removeAllPhotosFromHebrewScenarios = async () => {
+    return await axios.post(`${baseURL}/hebrewScenario/removePhotos`);
+  };
+
   return {
     logout,
     login,
@@ -118,6 +122,7 @@ export function useApi() {
     getLatestHebrewScenarioNumber,
     approveHebrewScenario,
     disapproveHebrewScenario,
-    removeAllPhotosFromScenarios
+    removeAllPhotosFromScenarios,
+    removeAllPhotosFromHebrewScenarios
   };
 }

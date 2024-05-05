@@ -70,9 +70,6 @@ function OpeningPageForm() {
   }, [fetchScenarios]);
 
 
-
-
-
   const handleScenarioSelectionChange = (scenario, isChecked) => {
     if (isChecked) {
       setSelectedScenarios((prevScenarios) => [...prevScenarios, scenario]);

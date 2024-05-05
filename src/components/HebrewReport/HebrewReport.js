@@ -1,5 +1,5 @@
 import React from 'react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect,useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Container, Typography, TextField, Grid, Button, Checkbox, FormControlLabel, CircularProgress, Paper, Box } from '@mui/material';
 import logo from '../../images/logo.png';
@@ -44,7 +44,7 @@ const useStyles = makeStyles((theme) => ({
 
 function HebrewReport() {
   const classes = useStyles();
-  const { getHebrewScenarios } = useApi();
+  const { getHebrewScenarios, removeAllPhotosFromHebrewScenarios } = useApi();
   const [selectedScenarios, setSelectedScenarios] = useState([]);
   const [imageData, setImageData] = useState('');
   const [formData, setFormData] = useState({companyName: '',documentName: '', imageTag: '',date: ''});
@@ -53,20 +53,25 @@ function HebrewReport() {
   const [searchTerm, setSearchTerm] = useState('');  
   const theme = useTheme();
 
+  const fetchScenarios = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const response = await getHebrewScenarios();
+      const approvedScenarios = response.data.filter(scenario => scenario.status === 'Approved');
+      setScenarios(approvedScenarios);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [getHebrewScenarios]); // Assuming getScenarios doesn't change, or include its dependencies as needed
+
+
+
   useEffect(() => {
-    const fetchScenarios = async () => {
-      try {
-        const response = await getHebrewScenarios();
-        const approvedScenarios = response.data.filter(scenario => scenario.status === 'Approved');
-        setScenarios(approvedScenarios);
-        setIsLoading(false);
-      } catch (error) {
-        console.log(error);
-        setIsLoading(false);
-      }
-    };
     fetchScenarios();
-  },[getHebrewScenarios]);
+  }, [fetchScenarios]);
+
   
 
   const handleScenarioSelectionChange = (scenario, isChecked) => {
@@ -146,14 +151,16 @@ function HebrewReport() {
     doc.render();
     console.log(doc);
     const output = doc.getZip().generate({ type: 'blob' });
-    saveAs(output, 'output.docx');
+    saveAs(output, `${formData.documentName}.docx`);
+    await removeAllPhotosFromHebrewScenarios();
+    setSelectedScenarios([]);
+    fetchScenarios();
   }
   
 
   const handleSubmit = (event) => {
     event.preventDefault();    
     generateDocx(formData, selectedScenarios);
-    setSelectedScenarios([]);
   }
 
   
@@ -253,7 +260,7 @@ function HebrewReport() {
                 filteredScenarios.length > 0 ? (
                   filteredScenarios.map((scenario, index) => (
                     <div key={index} >
-                      <HebrewScenario scenario={scenario} />
+                      <HebrewScenario refreshScenarios={fetchScenarios} scenario={scenario} uploadPage={true} />
                       <Box display="flex" justifyContent="flex-end">
                         <FormControlLabel
                           style={{ direction: 'rtl',  textAlign: 'right'}}
