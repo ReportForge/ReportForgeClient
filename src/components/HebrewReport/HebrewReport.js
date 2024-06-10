@@ -168,13 +168,6 @@ function HebrewReport() {
   return (
     
     <Container component="main" maxWidth="md">
-      <Link to="/hebrewMenu" style={{ textDecoration: 'none',position: 'absolute', top: '0', left: '0', marginTop: '100px', marginLeft: '20px'}}>
-        <img
-          style={{width: "50px", height: "50px"}}
-          src={theme.palette.mode === "dark" ?  whiteBack : Back}
-          alt="Report"
-        />
-      </Link>
       <div className={classes.formContainer}>
         <img src={logo} alt="Company Logo" className={classes.logo} />
         <Typography component="h1" variant="h5" style={{color: "#Oe1625"}}>

@@ -187,13 +187,6 @@ export default function ScenarioCreate() {
 
   return (
     <>
-      <Link to="/english" style={{ textDecoration: 'none', position: 'absolute', top: '0', left: '0', marginTop: '100px', marginLeft: '20px' }}>
-        <img
-          style={{ width: "50px", height: "50px" }}
-          src={theme.palette.mode === "dark" ? whiteBack : Back}
-          alt="Report"
-        />
-      </Link>
       <Paper onSubmit={handleSubmit}>
         <Typography component="h1" variant="h5" align="center" sx={{ marginTop: '50px', marginBottom: '50px', fontWeight: 'bold' }}>
           Scenarios Creation

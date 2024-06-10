@@ -7,7 +7,8 @@ import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
 import Logo from './images/reportForge.png'
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography } from '@material-ui/core';
+import { Link } from "react-router-dom";
+
 
 
 const useStyles = makeStyles((theme) => ({
@@ -43,17 +44,8 @@ function App() {
       <CssBaseline />
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         <Switch checked={darkMode} onChange={handleDarkModeToggle} />
-      </Box>
-      <div className={classes.topLeft}>
-        <img
-          src={Logo}
-          alt="Logo"
-          className={classes.logo}
-        />
-        <Typography variant="h5" className={classes.title} style={{color: '#Oe1625'}}>
-          Report Forge
-        </Typography>
-      </div>
+      </Box >
+      
       <AppRouter/>
     </ThemeProvider>
   );

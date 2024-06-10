@@ -22,13 +22,6 @@ function EnglishReport() {
 
   return (
     <>
-      <Link to="/english" style={{ textDecoration: 'none',position: 'absolute', top: '0', left: '0', marginTop: '100px', marginLeft: '20px'}}>
-          <img
-            style={{width: "50px", height: "50px"}}
-            src={theme.palette.mode === "dark" ?  whiteBack : Back}
-            alt="Report"
-          />
-      </Link>
       <Paper className={classes.root}>
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           <Typography variant="h4" className={classes.title} style={{color: "#Oe1625"}}>
