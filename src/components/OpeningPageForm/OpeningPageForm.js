@@ -74,7 +74,7 @@ function OpeningPageForm() {
     if (isChecked) {
       setSelectedScenarios((prevScenarios) => [...prevScenarios, scenario]);
     } else {
-      setSelectedScenarios((prevScenarios) => prevScenarios.filter((sc) => sc.name !== scenario.name));
+      setSelectedScenarios((prevScenarios) => prevScenarios.filter((sc) => sc._id !== scenario._id));
     }
   };
 
@@ -250,7 +250,7 @@ function OpeningPageForm() {
                     <FormControlLabel
                       control={
                         <Checkbox
-                          checked={selectedScenarios.includes(scenario)}
+                          checked={selectedScenarios.some(sc => sc._id === scenario._id)}
                           onChange={(event) => handleScenarioSelectionChange(scenario, event.target.checked)}
                           name={scenario.name}
                           color="primary"
